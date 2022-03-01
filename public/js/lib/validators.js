@@ -57,3 +57,17 @@ export const isValidUsername = (value) => {
     errors,
   };
 };
+
+export const isNotEmpty = (value) => {
+  const errors = [];
+  if (typeof value === "string") {
+    value.length === 0 && errors.push("Value can't be empty");
+  } else {
+    !value && errors.push("Value can't be empty");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+};
