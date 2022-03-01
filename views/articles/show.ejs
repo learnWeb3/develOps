@@ -1,0 +1,94 @@
+<%- include('../layouts/_banneer.ejs', {text: "Russia, Ukraine and the Revenge of Geography" }) %>
+
+
+    <div class="container py-4">
+        <div id="toolbar" class="d-none"></div>
+        <div id="editor" class="border-0" style="min-height: 50vh;">
+            <h2><strong>The ancient Romans believed every place</strong>&nbsp;— from a street corner to an entire
+                nation — possessed a genius loci, a presiding spirit that animated it, watched over it. Today, we
+                dismiss such fanciful notions, and in fact, gleefully pronounce the death of geography itself.
+                Digital technologies have dissolved the inconvenient confines of the physical world, leaving us free
+                to frolic in a placeless present. Or so we’re told.</h2>
+            <h2><strong>Rumors of geography’s demise have been greatly exaggerated. ­­Not only is geography
+                    distinctly undead, it is more alive than ever. Russia’s invasion of Ukraine drives this point
+                    home.&nbsp;War, it is said, is the best geography teacher.</strong></h2>
+            <h2><strong>What is geography? There are different branches, from physical (think climate, soil, and
+                    atmosphere) to geomatics (using computers to aid in mapping), but at its heart, the discipline
+                    is profoundly human and humane. “Geography is the study of earth as the home of people,” says
+                    Yi-fu Tuan, perhaps the greatest geographer of our age.</strong></h2>
+            <h2><strong>Getting inside Putin’s head demands the skills not only of a psychologist and historian but
+                    of a geographer. Yes, Putin is obsessed with history, but it is maps, not history books, that
+                    keep him up at night.</strong></h2>
+            <h2><br></h2>
+            <h2><strong>Geography also has real-world consequences. What Napoleon Bonaparte said more than two
+                    centuries ago still holds true today: “If you know a country’s geography, you can understand and
+                    predict its foreign policy.”</strong></h2>
+            <h2><strong>Getting inside Putin’s head, as much as that is possible, demands the skills not only of a
+                    psychologist and historian but of a geographer. Yes, Putin is obsessed with history — his warped
+                    version of it, at least — but it is maps, not history books, that keep him up at night. Russia’s
+                    map shrank dramatically after the collapse of the Soviet Union and Putin is determined to
+                    restore it.</strong></h2>
+            <h2><strong>Here are four of the geographic facts about Ukraine that shed light on Putin’s war:</strong>
+            </h2>
+            <h2><strong>Ukraine sits squarely on the “European Invasion Superhighway,” linking East and West, Europe
+                    and Asia.</strong></h2>
+            <h2><strong>Ukraine’s strategically important location means it has been fought over by various empires
+                    and regimes: the Ottomans, Nazi Germany, and, of course, Russia.</strong></h2>
+            <h2><strong>Ukraine’s topography is mostly flat and rolling.&nbsp;The nation’s one mountain range, the
+                    Carpathians, is easily penetrated. That’s good news if you’re a cyclist or, say, an invading
+                    Russian army, but bad news if you’re trying to defend your homeland. There is a reason the Kurds
+                    have an expression to describe their people’s plight: “No friends but the mountains.”</strong>
+            </h2>
+            <h2><strong>Ukraine’s history is intertwined with that of Russia but, contrary to Putin’s assertions,
+                    Ukrainians have always had their own distinctive culture.</strong></h2>
+            <h2><strong>It’s safe to say that, until recently, most Americans couldn’t find Ukraine on the map. A
+                    recent survey by the Council on Foreign Relations found that of 2,000 adults polled, most could
+                    answer just over half of the geography questions correctly, and only six percent got at least 80
+                    percent of the questions correct.</strong></h2>
+            <h2><strong>This geographic black hole is a problem but not the biggest one. Barack Obama, addressing
+                    the contestants at the 2012 National Geographic Bee, said it well:</strong></h2>
+            <h2><strong><em>The study of geography is about more than just memorizing places on a map. It’s about
+                        understanding the complexity of our world, appreciating the diversity of cultures that
+                        exists across continents. And in the end, it’s about using all that knowledge to help bridge
+                        divides and bring people together.</em></strong></h2>
+            <h2><br></h2>
+            <h2><strong>Geographers are not neutral bystanders. They have opinions, and take a stand, as The
+                    American Association of Geographers recently did over Russia’s invasion of Ukraine.</strong>
+            </h2>
+            <h2><strong><em>Geography tells us that a people’s right to determine their future is inextricably
+                        linked with their sense of place and space. Russia’s unlawful invasion and occupation of
+                        Ukraine force the displacement and migration of countless communities, stripping them of
+                        their dignity and fundamental rights.</em></strong></h2>
+            <h2><br></h2>
+            <h2><strong>Ultimately, geographers tend to be optimists, secure in the belief, says Tuan, that
+                    “asymmetrical relationships and exploitation can be removed, or reversed.”</strong></h2>
+            <h2><strong>Geography may not be destiny, but it comes awfully close. In ways large and small, our
+                    surroundings shape our lives. Our productivity, happiness, and creativity are all functions of
+                    place. Simply put: Where we are affects who we are.</strong></h2>
+            <h2><strong>The stubborn persistence of geography is, I think, something to celebrate. It means the
+                    world remains diverse, and as any biologist will tell you, ecosystems thrive when there is
+                    diversity. There’s nothing more vulnerable than a one-crop economy. Vive la difference isn’t
+                    just a catchy jingle. It’s a survival strategy.</strong></h2>
+            <h2>No less than that great geographer from a place called Margaritaville, Jimmy Buffet, said it best:
+                “Without geography, you’re nowhere.”</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="my-4">Let's test what you’ve just learnt !</h2>
+        <%- include('../quiz/_question.ejs') %>
+    </div>
+
+    <script src="/vendors/quill_v1.3.6/quill.min.js"></script>
+    <script>
+        const editor = new Quill('#editor', {
+            modules: {
+                toolbar: {
+                    container: "#toolbar"
+                }
+            },
+            placeholder: 'Compose an epic...',
+            readOnly: true,
+            theme: 'snow'  // or 'bubble'
+        });
+    </script>

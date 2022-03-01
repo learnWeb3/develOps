@@ -3,15 +3,15 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const router = express.Router();
+const {Router} = express
+const staticRouter = Router();
 
-
-router.get("/", (req, res) => {
-    res.render("home", { template: "home" });
+staticRouter.get("/", (req, res) => {
+    res.render("static/home");
 });
 
-router.get("*", (req, res) => {
+staticRouter.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../public", "images/404.jpg"));
 });
 
-export default router;
+export default staticRouter;

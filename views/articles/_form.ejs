@@ -1,0 +1,41 @@
+<div class="container">
+    <h1 class="fs-2 my-4">
+        <%= header %>
+    </h1>
+    <form action="" class="col-12">
+        <div class="mb-3">
+            <label class="form-label" for="">Select a category</label>
+            <select class="form-select" aria-label="Default select example">
+                <option selected>Link your article to a category</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="">Choose a title</label>
+            <input type="text" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="">What would your like to share ?</label>
+
+            <!-- Create the editor container -->
+            <div id="editor" style="min-height: 50vh;">
+            </div>
+
+        </div>
+
+       <div class="row">
+        <div class="col-12 col-lg-6 d-flex items-center justify-content-lg-start">
+            <button class="btn btn-lg btn-primary mt-2 mb-4 col-12 col-lg-4">
+                preview
+            </button>
+           </div>
+           <div class="col-12 col-lg-6 d-flex items-center justify-content-lg-end">
+            <button class="btn btn-lg btn-success mt-2 mb-4 col-12 col-lg-4">
+                submit
+            </button>
+           </div>
+       </div>
+    </form>
+</div>
