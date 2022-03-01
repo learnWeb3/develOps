@@ -9,7 +9,7 @@ export const isValidPassword = (value) => {
     value.length <= 6 &&
       errors.push("length must be greater or equal to 6 characters");
   } else {
-    errors.push(`Email is required`);
+    errors.push(`Password is required`);
   }
 
   return {
@@ -20,8 +20,38 @@ export const isValidPassword = (value) => {
 
 export const isValidEmail = (value) => {
   const errors = [];
-  !(/^[a-z0-9]+@[a-z0-9]+\..{2,3}$/).test(value) &&
-    errors.push("Must be a valid email");
+  if (value && value.length) {
+    !/^[a-z0-9]+@[a-z0-9]+\..{2,3}$/.test(value) &&
+      errors.push("Must be a valid email");
+  } else {
+    errors.push(`Email is required`);
+  }
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+};
+
+export const isSameAs = (value, refValue, refValueName) => {
+  const errors = [];
+  if (value !== refValue) {
+    errors.push(`Must be same value as ${refValueName}.`);
+  }
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+};
+
+export const isValidUsername = (value) => {
+  const errors = [];
+  if (value) {
+    /\s/.test(value) &&
+      errors.push("Username must only contains letters and/or numbers");
+    value.length < 6 && errors.push("Must be at least 6 characters long.");
+  } else {
+    errors.push(`Username is required`);
+  }
   return {
     isValid: errors.length === 0,
     errors,

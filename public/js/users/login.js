@@ -1,4 +1,4 @@
-import { isValidEmail, isValidPassword } from "../lib/validators.js";
+import { isValidEmail, isValidPassword, isSameAs } from "../lib/validators.js";
 
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
@@ -35,7 +35,7 @@ import { isValidEmail, isValidPassword } from "../lib/validators.js";
         passwordInput.classList.remove(...errorsClasses);
         passwordErrorsSpan.innerHTML = "";
       } else {
-        emailErrorsSpan.innerHTML = "";
+        passwordErrorsSpan.innerHTML = "";
         passwordInput.classList.add(...errorsClasses);
         const textNode = document.createTextNode(errors.join(", "));
         passwordErrorsSpan.appendChild(textNode);

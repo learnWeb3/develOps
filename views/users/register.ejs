@@ -5,19 +5,23 @@
             <form action="" class="col-12 col-lg-8 offset-lg-col-2">
                 <div class="mb-3">
                     <label class="form-label" for="">Username</label>
-                    <input type="text" class="form-control">
+                    <input type="text" name="username" class="form-control mb-1">
+                    <span data-for="username" class="errors text-danger py-2"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="">Email address</label>
-                    <input type="text" class="form-control">
+                    <input type="text" name="email" class="form-control mb-1">
+                    <span data-for="email" class="errors text-danger py-2"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="">Password</label>
-                    <input type="password" class="form-control">
+                    <input type="password" name="password" class="form-control mb-1">
+                    <span data-for="password" class="errors text-danger py-2"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="">Password Confirmation</label>
-                    <input type="password" class="form-control">
+                    <input type="password" name="password-confirmation" class="form-control mb-1">
+                    <span data-for="password-confirmation" class="errors text-danger py-2"></span>
                 </div>
                 <button class="btn btn-md btn-success col-12">
                     Submit
@@ -31,3 +35,6 @@
         </div>
     </div>
 </div>
+
+
+<script type="module" src="/js/users/register.js"></script>
