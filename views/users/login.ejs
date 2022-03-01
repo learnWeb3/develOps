@@ -2,16 +2,16 @@
     <div class="row min-vh-80">
         <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
             <h1 class="col-12 col-lg-8 offset-lg-col-2 my-4 fs-2">Sign in</h1>
-            <form action="" class="col-12 col-lg-8 offset-lg-col-2">
+            <form action="/login" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
                 <div class="mb-3">
-                    <label class="form-label" for="">Email address</label>
-                    <input type="text" name="email" class="form-control mb-1">
+                    <label class="form-label" for="email">Email address</label>
+                    <input type="text" name="email" id="email" class="form-control mb-1">
                     <span data-for="email" class="errors text-danger py-2"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="">Password</label>
-                    <input type="password" name="password" class="form-control mb-1">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control mb-1">
                     <span data-for="password" class="errors text-danger py-2"></span>
                 </div>
 

@@ -1,10 +1,10 @@
 export const isValidPassword = (value) => {
   const errors = [];
   if (value && value.length) {
-    !/A-Z/.test(value) && errors.push("Must contain capital letters");
-    !/a-z/.test(value) && errors.push("Must contain lowercased letters");
+    !/[A-Z]/.test(value) && errors.push("Must contain capital letters");
+    !/[a-z]/.test(value) && errors.push("Must contain lowercased letters");
     !/\d*/.test(value) && errors.push("Must contain number(s) value(s)");
-    !/\s/.test(value) &&
+    !/[^A-Za-z0-9]/.test(value) &&
       errors.push("Must contain special character(s) value(s)");
     value.length <= 6 &&
       errors.push("length must be greater or equal to 6 characters");

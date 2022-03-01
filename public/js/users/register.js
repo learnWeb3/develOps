@@ -9,10 +9,10 @@ import { isValidEmail, isValidPassword, isSameAs, isValidUsername } from "../lib
       ".errors[data-for='password']"
     );
     const passwordConfirmationInput = document.querySelector(
-      "input[name='password-confirmation']"
+      "input[name='password_confirmation']"
     );
     const passwordConfirmationErrorsSpan = document.querySelector(
-      ".errors[data-for='password-confirmation']"
+      ".errors[data-for='password_confirmation']"
     );
     const usernameInput = document.querySelector("input[name='username']");
     const usernameErrorsSpan = document.querySelector(

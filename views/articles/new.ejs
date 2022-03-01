@@ -17,4 +17,11 @@
             placeholder: 'Compose an epic...',
             theme: 'snow'  // or 'bubble'
         });
+
+
+        editor.on('text-change', function (delta, oldDelta, source) {
+           const data = editor.getContents()
+           document.querySelector('#content').value = JSON.stringify(data)
+        });
+
     </script>
