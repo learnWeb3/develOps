@@ -8,7 +8,7 @@ const {
   Types: { ObjectId },
 } = Schema;
 
-const roles = {
+export const roles = {
   admin: 1,
   user: 0,
 };

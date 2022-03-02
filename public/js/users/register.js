@@ -1,4 +1,9 @@
-import { isValidEmail, isValidPassword, isSameAs, isValidUsername } from "../lib/validators.js";
+import {
+  isValidEmail,
+  isValidPassword,
+  isSameAs,
+  isValidUsername,
+} from "../lib/validators.js";
 
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
@@ -18,13 +23,13 @@ import { isValidEmail, isValidPassword, isSameAs, isValidUsername } from "../lib
     const usernameErrorsSpan = document.querySelector(
       ".errors[data-for='username']"
     );
+    const submitButton = document.querySelector(
+      'form#register button[type="submit"]'
+    );
 
     const errorsClasses = ["border-2", "border-danger"];
 
-    usernameInput.addEventListener("input", (event) => {
-      const {
-        currentTarget: { value },
-      } = event;
+    const validateUsername = (usernameInput, usernameErrorsSpan, value) => {
       const { isValid, errors } = isValidUsername(value);
       if (isValid) {
         usernameInput.classList.remove(...errorsClasses);
@@ -35,12 +40,10 @@ import { isValidEmail, isValidPassword, isSameAs, isValidUsername } from "../lib
         const textNode = document.createTextNode(errors.join(", "));
         usernameErrorsSpan.appendChild(textNode);
       }
-    });
+      return isValid;
+    };
 
-    emailInput.addEventListener("input", (event) => {
-      const {
-        currentTarget: { value },
-      } = event;
+    const validateEmail = (emailInput, emailErrorsSpan, value) => {
       const { isValid, errors } = isValidEmail(value);
       if (isValid) {
         emailInput.classList.remove(...errorsClasses);
@@ -51,12 +54,10 @@ import { isValidEmail, isValidPassword, isSameAs, isValidUsername } from "../lib
         const textNode = document.createTextNode(errors.join(", "));
         emailErrorsSpan.appendChild(textNode);
       }
-    });
+      return isValid;
+    };
 
-    passwordInput.addEventListener("input", (event) => {
-      const {
-        currentTarget: { value },
-      } = event;
+    const validatePassword = (passwordInput, passwordErrorsSpan, value) => {
       const { isValid, errors } = isValidPassword(value);
       if (isValid) {
         passwordInput.classList.remove(...errorsClasses);
@@ -67,12 +68,14 @@ import { isValidEmail, isValidPassword, isSameAs, isValidUsername } from "../lib
         const textNode = document.createTextNode(errors.join(", "));
         passwordErrorsSpan.appendChild(textNode);
       }
-    });
+      return isValid;
+    };
 
-    passwordConfirmationInput.addEventListener("input", (event) => {
-      const {
-        currentTarget: { value },
-      } = event;
+    const validatePasswordConfirmation = (
+      passwordConfirmationInput,
+      passwordConfirmationErrorsSpan,
+      value
+    ) => {
       const { isValid, errors } = isSameAs(
         value,
         passwordInput.value,
@@ -87,6 +90,176 @@ import { isValidEmail, isValidPassword, isSameAs, isValidUsername } from "../lib
         const textNode = document.createTextNode(errors.join(", "));
         passwordConfirmationErrorsSpan.appendChild(textNode);
       }
+      return isValid;
+    };
+
+    // listnen inputs events
+    usernameInput.addEventListener("input", (event) => {
+      const checkUsername = validateUsername(
+        usernameInput,
+        usernameErrorsSpan,
+        usernameInput.value
+      );
+      const checkEmail = validateEmail(
+        emailInput,
+        emailErrorsSpan,
+        emailInput.value
+      );
+      const checkPassword = validatePassword(
+        passwordInput,
+        passwordErrorsSpan,
+        passwordInput.value
+      );
+      const checkPasswordConfirmation = validatePasswordConfirmation(
+        passwordConfirmationInput,
+        passwordConfirmationErrorsSpan,
+        passwordConfirmationInput.value
+      );
+
+      if (
+        checkUsername &&
+        checkEmail &&
+        checkPassword &&
+        checkPasswordConfirmation
+      ) {
+        submitButton.classList.remove("disabled");
+      } else {
+        submitButton.classList.add("disabled");
+      }
     });
+
+    emailInput.addEventListener("input", (event) => {
+      const checkUsername = validateUsername(
+        usernameInput,
+        usernameErrorsSpan,
+        usernameInput.value
+      );
+      const checkEmail = validateEmail(
+        emailInput,
+        emailErrorsSpan,
+        emailInput.value
+      );
+      const checkPassword = validatePassword(
+        passwordInput,
+        passwordErrorsSpan,
+        passwordInput.value
+      );
+      const checkPasswordConfirmation = validatePasswordConfirmation(
+        passwordConfirmationInput,
+        passwordConfirmationErrorsSpan,
+        passwordConfirmationInput.value
+      );
+
+      if (
+        checkUsername &&
+        checkEmail &&
+        checkPassword &&
+        checkPasswordConfirmation
+      ) {
+        submitButton.classList.remove("disabled");
+      } else {
+        submitButton.classList.add("disabled");
+      }
+    });
+
+    passwordInput.addEventListener("input", (event) => {
+      const checkUsername = validateUsername(
+        usernameInput,
+        usernameErrorsSpan,
+        usernameInput.value
+      );
+      const checkEmail = validateEmail(
+        emailInput,
+        emailErrorsSpan,
+        emailInput.value
+      );
+      const checkPassword = validatePassword(
+        passwordInput,
+        passwordErrorsSpan,
+        passwordInput.value
+      );
+      const checkPasswordConfirmation = validatePasswordConfirmation(
+        passwordConfirmationInput,
+        passwordConfirmationErrorsSpan,
+        passwordConfirmationInput.value
+      );
+
+      if (
+        checkUsername &&
+        checkEmail &&
+        checkPassword &&
+        checkPasswordConfirmation
+      ) {
+        submitButton.classList.remove("disabled");
+      } else {
+        submitButton.classList.add("disabled");
+      }
+    });
+
+    passwordConfirmationInput.addEventListener("input", (event) => {
+      const checkUsername = validateUsername(
+        usernameInput,
+        usernameErrorsSpan,
+        usernameInput.value
+      );
+      const checkEmail = validateEmail(
+        emailInput,
+        emailErrorsSpan,
+        emailInput.value
+      );
+      const checkPassword = validatePassword(
+        passwordInput,
+        passwordErrorsSpan,
+        passwordInput.value
+      );
+      const checkPasswordConfirmation = validatePasswordConfirmation(
+        passwordConfirmationInput,
+        passwordConfirmationErrorsSpan,
+        passwordConfirmationInput.value
+      );
+      if (
+        checkUsername &&
+        checkEmail &&
+        checkPassword &&
+        checkPasswordConfirmation
+      ) {
+        submitButton.classList.remove("disabled");
+      } else {
+        submitButton.classList.add("disabled");
+      }
+    });
+
+    // onload
+    const checkUsername = validateUsername(
+      usernameInput,
+      usernameErrorsSpan,
+      usernameInput.value
+    );
+    const checkEmail = validateEmail(
+      emailInput,
+      emailErrorsSpan,
+      emailInput.value
+    );
+    const checkPassword = validatePassword(
+      passwordInput,
+      passwordErrorsSpan,
+      passwordInput.value
+    );
+    const checkPasswordConfirmation = validatePasswordConfirmation(
+      passwordConfirmationInput,
+      passwordConfirmationErrorsSpan,
+      passwordConfirmationInput.value
+    );
+
+    if (
+      checkUsername &&
+      checkEmail &&
+      checkPassword &&
+      checkPasswordConfirmation
+    ) {
+      submitButton.classList.remove("disabled");
+    } else {
+      submitButton.classList.add("disabled");
+    }
   });
 })();

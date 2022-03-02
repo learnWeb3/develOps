@@ -2,7 +2,7 @@
     <div class="row min-vh-80">
         <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
             <h1 class="col-12 col-lg-8 offset-lg-col-2 my-4 fs-2">Sign in</h1>
-            <form action="/login" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
+            <form id="login" action="/login" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
                 <div class="mb-3">
                     <label class="form-label" for="email">Email address</label>
                     <input type="text" name="email" id="email" class="form-control mb-1">
@@ -15,7 +15,7 @@
                     <span data-for="password" class="errors text-danger py-2"></span>
                 </div>
 
-                <button class="btn btn-md btn-success col-12">
+                <button type="submit" class="btn btn-md btn-success col-12 disabled">
                     Submit
                 </button>
             </form>

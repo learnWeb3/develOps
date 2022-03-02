@@ -14,6 +14,7 @@ usersRouter.post("/login", async(req, res, next)=>{
       email, 
       password
     });
+    console.log(user)
     req.session.currentUser = user.id;
     res.redirect('/')
   } catch (error) {

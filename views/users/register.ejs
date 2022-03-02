@@ -2,7 +2,7 @@
     <div class="row min-vh-80">
         <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
             <h1 class="col-12 col-lg-8 offset-lg-col-2 my-4 fs-2">Sign up</h1>
-            <form action="/register" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
+            <form id="register" action="/register" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
                 <div class="mb-3">
                     <label class="form-label" for="">Username</label>
                     <input type="text" name="username" class="form-control mb-1">
@@ -23,7 +23,7 @@
                     <input type="password" name="password_confirmation" class="form-control mb-1">
                     <span data-for="password_confirmation" class="errors text-danger py-2"></span>
                 </div>
-                <button class="btn btn-md btn-success col-12">
+                <button type="submit" class="btn btn-md btn-success col-12 disabled">
                     Submit
                 </button>
             </form>

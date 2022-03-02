@@ -2,14 +2,17 @@ import express from "express";
 import mongoose from "mongoose";
 import expressLayouts from "express-ejs-layouts";
 import "dotenv/config";
-import { errorHandler, isLoggedIn } from "./middlewares/index.js";
+import { join } from "path";
+import { errorHandler, isLoggedIn, authGuard } from "./middlewares/index.js";
 import session from "express-session";
+import favicon from "serve-favicon";
 import staticRouter from "./routes/static.routes.js";
 import usersRouter from "./routes/users.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import articlesRouter from "./routes/articles.routes.js";
 import quizRouter from "./routes/quiz.routes.js";
-import categoryRouter from './routes/category.routes.js';
+import categoryRouter from "./routes/category.routes.js";
+import { NotFoundError } from "./base/errors/index.js";
 
 const {
   DB_USERNAME,
@@ -35,6 +38,9 @@ mongoose
     app.set("layout extractScripts", true); // extract layout scripts to script tag just before body tag close
     app.set("layout", "./layouts/layout");
 
+    app.use(express.static("public")); // ASSETS
+    app.use(favicon(join(process.cwd(), "public", "favicon.ico"))); // favicon
+
     // session management
     app.use(
       session({
@@ -42,14 +48,24 @@ mongoose
         resave: false,
         saveUninitialized: true,
         cookie: {
-          maxAge: parseInt(SESSION_EXPIRATION_DELAY_MS)
+          maxAge: parseInt(SESSION_EXPIRATION_DELAY_MS),
         },
       })
     );
 
+    // verify if a user is logged in and set isLoggedIn property on res.locals
     app.use(isLoggedIn);
+    // verify user rights to access ressources
+    app.use(
+      authGuard([
+        { path: "/login", method: "GET" },
+        { path: "/register", method: "GET" },
+        { path: "/login", method: "POST" },
+        { path: "/register", method: "POST" },
+        { path: "/", method: "GET" },
+      ])
+    );
 
-    app.use(express.static("public")); // ASSETS
     app.use(express.json()); // pour parser content-type:application/json
     app.use(express.urlencoded({ extended: true })); // pour parser content-type: application/x-www-form-urlencoded
     // true pour utiliser la librairie qs, permets de récuper un objet pur { name: jako,age : 12}
@@ -61,6 +77,14 @@ mongoose
     app.use(articlesRouter);
     app.use(quizRouter);
     app.use(staticRouter);
+
+    app.get("*", (req, res, next) => {
+      try {
+        throw new NotFoundError("Page does not exists, the page you are looking for could have been deleted or moved somewhere else.");
+      } catch (error) {
+        next(error);
+      }
+    });
     // error catching/handling
     app.use(errorHandler);
     app.listen(SERVER_PORT, SERVER_HOST, () => {
