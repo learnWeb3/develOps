@@ -7,10 +7,23 @@ const articlesRouter = Router();
 
 articlesRouter.get("/articles/new", async (req, res, next) => {
   try {
-    const categories = await Category.findAll();
+    //const categories = await Category.findAll();
     res.render("articles/new", {
-      categories,
+      categories: [],
     });
+  } catch (error) {
+    console.log(error)
+    next(error);
+  }
+});
+
+articlesRouter.get("/articles/:id/delete", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Article.deleteOne({
+      _id: id,
+    });
+    res.redirect("/");
   } catch (error) {
     next(error);
   }
@@ -18,14 +31,15 @@ articlesRouter.get("/articles/new", async (req, res, next) => {
 
 articlesRouter.get("/articles/:id/edit", async (req, res, next) => {
   try {
-    const categories = await Category.findAll();
+    //const categories = await Category.findAll();
     res.render("articles/edit", {
-      categories,
+      //categories,
     });
   } catch (error) {
     next(error);
   }
 });
+
 
 articlesRouter.get("/articles/:id", async (req, res, next) => {
   try {
@@ -50,16 +64,5 @@ articlesRouter.post("/articles", async (req, res, next) => {
   }
 });
 
-articlesRouter.get("/articles/:id/delete", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await Article.deleteOne({
-      _id: id,
-    });
-    res.redirect("/");
-  } catch (error) {
-    next(error);
-  }
-});
 
 export default articlesRouter;

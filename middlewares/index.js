@@ -66,7 +66,6 @@ export function errorHandler(err, req, res, next) {
   if (err) {
     const errorType = err.constructor.name;
     const errorMessage = err.message;
-    console.log(errorType)
     const { path } = req;
     const isApplicationJson =
       req.headers["content-type"] === "application/json";
