@@ -39,12 +39,14 @@ quizRouter.post("/quiz", async (req, res, next) => {
       questionContent,
       answer,
       isValid,
-     } = req.body
+      article
+     } = req.body;
      await Quiz.register({
       title,
       questionContent,
       answer,
       isValid,
+      article
      })
   } catch (error) {
     next(error);
