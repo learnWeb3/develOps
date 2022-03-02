@@ -1,7 +1,12 @@
 import mongoose from "mongoose";
 import validator from "validator";
-import { BadRequestError, ForbiddenError } from "../base/errors/index.js";
+import {
+  BadRequestError,
+  ForbiddenError,
+  UnauthorizedError,
+} from "../base/errors/index.js";
 import bcrypt from "bcrypt";
+import Article from "./article.model.js";
 
 const { Schema, model } = mongoose;
 const {
@@ -64,11 +69,25 @@ const userSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters: true },
+    toObject: { getters: true, virtuals: true },
   }
 );
 
+userSchema.pre("remove", function (next) {
+  Article.remove({
+    user: this._id,
+  });
+  next();
+});
+
 userSchema.virtual("articles", {
+  ref: "Article",
+  localField: "_id",
+  foreignField: "user",
+});
+
+userSchema.virtual("articlesCount", {
+  ref: "Article",
   localField: "_id",
   foreignField: "user",
   count: true,
@@ -87,6 +106,105 @@ userSchema.methods.hashPassword = async function () {
   );
   this.password = hash;
   return this;
+};
+
+userSchema.statics.saveChange = async function (
+  id = null,
+  data = {
+    email: null,
+    password: null,
+    password_confirmation: null,
+    username: null,
+    current_password: null,
+    current_user: null,
+  }
+) {
+  const {
+    username,
+    password,
+    email,
+    password_confirmation,
+    current_password,
+    current_user,
+  } = data;
+
+  if (!id) {
+    throw new BadRequestError(`Missing user id`);
+  }
+
+  if (!username || !password || !email || !password_confirmation) {
+    throw new BadRequestError(
+      "Missing required parameter among username, password, password_confirmation, email"
+    );
+  }
+
+  if (password !== password_confirmation) {
+    throw new BadRequestError("Password does not match password confirmation");
+  }
+
+  const targetedUser = await this.findOne({
+    _id: id,
+  });
+  const currentUser = await this.findOne({
+    _id: current_user,
+  });
+  const accountUsingUsername = await this.findOne({
+    username,
+  });
+
+  const accountUsingEmail = await this.findOne({
+    email,
+  });
+
+  if (!currentUser) {
+    throw new UnauthorizedError(
+      `You must be logged in order to perform this operation`
+    );
+  }
+
+  if (!targetedUser) {
+    throw new BadRequestError(`User with id ${id} does not exist`);
+  }
+
+  if (accountUsingUsername) {
+    throw new BadRequestError(
+      "username has already been taken, please choose an other one"
+    );
+  }
+
+  if (accountUsingEmail) {
+    throw new BadRequestError("email is already registered");
+  }
+
+  if (
+    targetedUser._id !== currentUser._id &&
+    currentUser.role !== roles.admin
+  ) {
+    throw new UnauthorizedError(
+      "You do not have the rights to perform this action"
+    );
+  }
+
+  if (currentUser.role !== roles.admin) {
+    await targetedUser.passwordVerify(current_password);
+  }
+
+  Object.assign(targetedUser, {
+    email,
+    password,
+    username,
+  });
+
+  await targetedUser.hashPassword();
+
+  const validate = targetedUser.validateSync();
+  if (validate !== undefined) {
+    throw new BadRequestError(`Validation error: ${validate.message}`);
+  }
+
+  const updatedUser = await targetedUser.save();
+
+  return updatedUser;
 };
 
 userSchema.statics.register = async function (

@@ -22,6 +22,10 @@ articlesRouter.get("/articles/:id/delete", async (req, res, next) => {
     await Article.deleteOne({
       _id: id,
     });
+    req.session.flash = {
+      message: 'Article deleted with success',
+      type: 'success'
+    };
     res.redirect("/");
   } catch (error) {
     next(error);

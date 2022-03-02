@@ -1,0 +1,34 @@
+<input class="form-check-input" type="radio" name="question[<%= index %>]"
+id="<% `question-${question.id}-answer-${answer.id}` %>" value="<%= answer.id %>">
+<div class="form-check py-2 panel-radio shadow d-flex align-items-center my-4">
+    <label class="form-check-label px-2" for="<%= %>">
+        <span class="px-2">
+            <%= answerIndex %>)
+        </span>
+        <%= answer.content %>
+    </label>
+</div>
+
+<style>
+    input[type='radio']{
+       -webkit-appearance: none;
+       opacity: 0;
+       position: absolute;
+    }
+    .panel-radio{
+        height: 5rem;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        transition: all 150ms ease-in-out;
+    }
+
+    input:checked + .panel-radio {
+        background-color: #cff4fc;
+        font-weight: bold;
+    }
+
+    .panel-radio:hover{
+        background-color: #cff4fc;
+        font-weight: bold;
+    }
+</style>

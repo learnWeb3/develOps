@@ -26,15 +26,51 @@ const quizSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters: true },
+    toObject: { getters:true,virtuals: true }
   }
 );
 
+quizSchema.pre("remove", function (next) {
+  Question.remove({
+    quiz: this._id,
+  });
+  next();
+});
+
+quizSchema.pre('find', function(next){
+  this.populate('questions')
+  next()
+})
+
+quizSchema.pre('findOne', function(next){
+  this.populate('questions')
+  next()
+})
+
+quizSchema.pre('find', function(next){
+  this.populate('questionsCount')
+  next()
+})
+
+quizSchema.pre('findOne', function(next){
+  this.populate('questionsCount')
+  next()
+})
+
+
 quizSchema.virtual("questions", {
+  ref: 'Question',
   localField: "_id",
   foreignField: "quiz",
-  count: true,
 });
+
+quizSchema.virtual("questionsCount", {
+  ref: 'Question',
+  localField: "_id",
+  foreignField: "quiz",
+  count: true
+});
+
 
 quizSchema.statics.register = async function (
   data = {
@@ -53,12 +89,14 @@ quizSchema.statics.register = async function (
   // }
   const { article, title, questionContent, answer, isValid } = data;
 
+  // required parameters check
   if (!title || !questionContent || !answer || !isValid || !article) {
     throw new BadRequestError(
       "Missing parameter(s) among:  title, questionContent, answer, isValid, article"
     );
   }
 
+  // form manipulation check (dependent on specific format)
   if (
     questionContent.length !== answer.length ||
     questionContent.length !== isValid.length ||
@@ -67,10 +105,10 @@ quizSchema.statics.register = async function (
     throw new BadRequestError("Invalid informations sent...");
   }
 
+  // check if article exists
   const articleModel = await Article.findOne({
     _id: article,
   });
-
   if (!article) {
     throw new BadRequestError(`Article with id: ${id} does not exists`);
   }
@@ -87,12 +125,9 @@ quizSchema.statics.register = async function (
 
   // save the quiz
   const savedQuiz = await newQuiz.save();
-
-  console.log(savedQuiz.id);
-
+  // save the questions
+  const quizQuestions = [];
   try {
-    // save the questions
-    const quizQuestions = [];
     for (const question of questionContent) {
       const savedQuestion = await Question.register({
         quiz: savedQuiz.id,
@@ -101,7 +136,10 @@ quizSchema.statics.register = async function (
       quizQuestions.push(savedQuestion);
     }
   } catch (error) {
-    console.error(error);
+    // removing quiz and questions on pre hook if error
+    await this.deleteOne({
+      _id: savedQuiz.id,
+    });
   }
 
   try {
@@ -113,6 +151,7 @@ quizSchema.statics.register = async function (
         answer: ans,
         isValid: isValid[i][index],
       }));
+      const savedQuizQuestionAnswers = [];
       // save to answers to db
       for (const { isValid, answer } of quizQuestionAnswers) {
         const savedAnswer = await Answer.register({
@@ -120,11 +159,21 @@ quizSchema.statics.register = async function (
           question: quizQuestion.id,
           isValid,
         });
+        savedQuizQuestionAnswers.push(savedAnswer);
       }
+      quizQuestion.answers = savedQuizQuestionAnswers;
     }
   } catch (error) {
-    console.error(error);
+    // removing quiz and questions on pre hook if error
+    await this.deleteOne({
+      _id: savedQuiz.id,
+    });
   }
+
+  return {
+    quiz: newQuiz,
+    questions: quizQuestions,
+  };
 };
 
 export default model("Quiz", quizSchema);

@@ -65,7 +65,11 @@ categoryRouter.get("/categories/:id/delete", async (req, res, next) => {
     const {id} = req.params;
     await Category.deleteOne({
         _id: id
-    })
+    });
+    req.session.flash = {
+      message: 'Category deleted with success',
+      type: 'success'
+    };
     res.redirect("/categories/new");
   } catch (error) {
     next(error);

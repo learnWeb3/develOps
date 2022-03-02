@@ -4,6 +4,8 @@ import Category from "./category.model.js";
 import User from "./user.model.js";
 import { sliceStringAsPreview } from "../base/utils.js";
 import moment from "moment";
+import Quiz from "./quiz.model.js";
+import Question from "./question.model.js";
 const { Schema, model } = mongoose;
 const {
   Types: { ObjectId, Mixed },
@@ -42,14 +44,49 @@ const articleSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters: true },
+    toObject: { getters:true, virtuals: true }
   }
 );
+
+articleSchema.pre('remove', function(next){
+  Quiz.remove({
+    article: this._id
+  });
+  next();
+})
+
+articleSchema.pre('findOne', function(next){
+  this.populate({
+    path: "quiz"
+  })
+  next()
+})
+
+articleSchema.pre('findOne', function(next){
+  this.populate({
+    path: "quizCount"
+  })
+  next()
+})
+
+articleSchema.virtual("quiz", {
+  ref: 'Quiz',
+  localField: "_id",
+  foreignField: "article",
+});
+
+articleSchema.virtual("quizCount", {
+  ref: 'Quiz',
+  localField: "_id",
+  foreignField: "article",
+  count: true,
+});
+
 
 articleSchema.statics.findOneWithQuizz = async function (id) {
   const article = await this.findOne({
     _id: id,
-  }).populate("quiz");
+  })
   article.content = article.content;
   if (!article) {
     throw new NotFoundError(
@@ -170,12 +207,6 @@ articleSchema.statics.register = async function (
 
   return savedArticle;
 };
-
-articleSchema.virtual("quiz", {
-  localField: "_id",
-  foreignField: "article",
-  count: true,
-});
 
 articleSchema.methods.formatOneData = function () {
   return {

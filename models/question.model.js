@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../base/errors/index.js";
 import Quiz from "./quiz.model.js";
+import Answer from "./answer.model.js";
 const { Schema, model } = mongoose;
 const {
   Types: { ObjectId },
@@ -21,11 +22,46 @@ const questionSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters: true },
+    toObject: { getters:true,virtuals: true }
   }
 );
 
+questionSchema.pre('remove', function(next){
+  Answer.remove({
+    question: this._id
+  });
+  next()
+})
+
+questionSchema.pre('find', function(next){
+  this.populate('answers')
+  next()
+})
+
+questionSchema.pre('find', function(next){
+  this.populate('answersCount')
+  next()
+})
+
+questionSchema.pre('findOne', function(next){
+  this.populate('answers')
+  next()
+})
+
+questionSchema.pre('findOne', function(next){
+  this.populate('answersCount')
+  next()
+})
+
+
 questionSchema.virtual("answers", {
+  ref: 'Answer',
+  localField: "_id",
+  foreignField: "question",
+});
+
+questionSchema.virtual("answersCount", {
+  ref: 'Answer',
   localField: "_id",
   foreignField: "question",
   count: true,
@@ -44,7 +80,7 @@ questionSchema.statics.register = async function(
     );
   }
   const quizModel = await Quiz.findOne({
-    _id: id,
+    _id: quiz,
   });
 
   if (!quizModel) {

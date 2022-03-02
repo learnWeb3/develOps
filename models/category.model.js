@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../base/errors/index.js";
+import Article from "./article.model.js";
 const { Schema, model } = mongoose;
 const {
   Types: { ObjectId },
@@ -16,9 +17,30 @@ const categorySchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters: true },
+    toObject: { getters:true,virtuals: true }
   }
+
 );
+
+categorySchema.virtual("articles", {
+  ref: 'Article',
+  localField: "_id",
+  foreignField: "article",
+});
+
+categorySchema.virtual("articlesCount", {
+  ref: 'Article',
+  localField: "_id",
+  foreignField: "article",
+  count: true,
+});
+
+categorySchema.pre('remove', function(next){
+  Article.remove({
+    category: this._id
+  });
+  next()
+})
 
 categorySchema.statics.register = async function (data={
   label: null
@@ -71,10 +93,5 @@ categorySchema.statics.findAll = async function () {
   return await this.find({});
 };
 
-categorySchema.virtual("articles", {
-  localField: "_id",
-  foreignField: "article",
-  count: true,
-});
 
 export default model("Category", categorySchema);

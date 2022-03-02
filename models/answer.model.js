@@ -28,7 +28,7 @@ const answerSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters: true },
+    toObject: { getters:true,virtuals: true }
   }
 );
 

@@ -40,7 +40,8 @@ mongoose
     app.set("views", "./views"); // répertoire où se trouvent nos vues
     app.set("view engine", "ejs"); // moteur de modèle à utiliser
     app.use(expressLayouts); // additionnal middleware to have extended layout capabilities
-    app.set("layout extractScripts", true); // extract layout scripts to script tag just before body tag close
+    app.set("layout extractScripts", true); // extract partials scripts to script tag just before body tag close
+    app.set('extractStyles', true) // extract partials style to style tag in layout
     app.set("layout", "./layouts/layout");
 
     app.use(express.static("public")); // ASSETS

@@ -9,9 +9,21 @@
 
         <div class="container">
                 <h2 class="my-4">Let's test what you’ve just learnt !</h2>
-                <%- include('../quiz/_question.ejs') %>
-        </div>
 
+                <% article.quiz.forEach((quiz)=>{ %>
+                        <form action="/quizz/<%= quiz.id %>/validate" method="post">
+                                <p class="my-4 fs-2">
+                                        <%= quiz.title %>
+                                </p>
+                                <% quiz.questions.forEach((question, index)=>{ %>
+                                        <%- include('../quiz/_question.ejs', {question, index}) %>
+                                                <% }) %>
+                                                        <button type="submit"
+                                                                class="btn btn-lg btn-success mb-3">Submit</button>
+                        </form>
+                        <% }) %>
+        </div>
+        <script src="/js/articles/show.js"></script>
         <script src="/vendors/quill_v1.3.6/quill.min.js"></script>
         <script>
                 const articleContent = <%- article.content %>;
@@ -23,7 +35,7 @@
                         },
                         placeholder: 'Compose an epic...',
                         readOnly: true,
-                        theme: 'snow',
+                        theme: 'snow'
                 });
 
                 editor.setContents(articleContent)

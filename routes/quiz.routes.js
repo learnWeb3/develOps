@@ -48,6 +48,11 @@ quizRouter.post("/quiz", async (req, res, next) => {
       isValid,
       article
      })
+     req.session.flash = {
+      message: 'Quiz added with success',
+      type: 'success'
+    };
+     res.redirect(`/articles/${article}`)
   } catch (error) {
     next(error);
   }
@@ -55,7 +60,12 @@ quizRouter.post("/quiz", async (req, res, next) => {
 
 quizRouter.post("/quiz/:id", async (req, res, next) => {
   try {
-     console.log(req.body)
+     const {id} = req.params;
+     req.session.flash = {
+      message: 'Quiz updated with success',
+      type: 'success'
+    };
+     res.redirect(`/articles/${id}`)
   } catch (error) {
     next(error);
   }
