@@ -88,32 +88,42 @@ quizSchema.statics.register = async function (
   // save the quiz
   const savedQuiz = await newQuiz.save();
 
-  // save the questions
-  const quizQuestions = [];
-  for (const question of questionContent) {
-    const savedQuestion = await Question.register({
-      quiz: savedQuiz.id,
-      content: question,
-    });
-    quizQuestions.push(savedQuestion);
+  console.log(savedQuiz.id);
+
+  try {
+    // save the questions
+    const quizQuestions = [];
+    for (const question of questionContent) {
+      const savedQuestion = await Question.register({
+        quiz: savedQuiz.id,
+        content: question,
+      });
+      quizQuestions.push(savedQuestion);
+    }
+  } catch (error) {
+    console.error(error);
   }
 
-  // save the answers
-  for (let i = 0; i < quizQuestions.length; i++) {
-    const quizQuestion = quizQuestions[i];
-    // format related answers to the quizzQuestions
-    const quizQuestionAnswers = answer[i].map((ans, index) => ({
-      answer: ans,
-      isValid: isValid[i][index],
-    }));
-    // save to answers to db
-    for (const { isValid, answer } of quizQuestionAnswers) {
-      const savedAnswer = await Answer.register({
-        content: answer,
-        question: quizQuestion.id,
-        isValid,
-      });
+  try {
+    // save the answers
+    for (let i = 0; i < quizQuestions.length; i++) {
+      const quizQuestion = quizQuestions[i];
+      // format related answers to the quizzQuestions
+      const quizQuestionAnswers = answer[i].map((ans, index) => ({
+        answer: ans,
+        isValid: isValid[i][index],
+      }));
+      // save to answers to db
+      for (const { isValid, answer } of quizQuestionAnswers) {
+        const savedAnswer = await Answer.register({
+          content: answer,
+          question: quizQuestion.id,
+          isValid,
+        });
+      }
     }
+  } catch (error) {
+    console.error(error);
   }
 };
 
