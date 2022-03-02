@@ -3,7 +3,12 @@ import mongoose from "mongoose";
 import expressLayouts from "express-ejs-layouts";
 import "dotenv/config";
 import { join } from "path";
-import { errorHandler, isLoggedIn, authGuard } from "./middlewares/index.js";
+import {
+  errorHandler,
+  isLoggedIn,
+  authGuard,
+  flashAlert,
+} from "./middlewares/index.js";
 import session from "express-session";
 import favicon from "serve-favicon";
 import staticRouter from "./routes/static.routes.js";
@@ -56,18 +61,25 @@ mongoose
     // verify if a user is logged in and set isLoggedIn property on res.locals
     app.use(isLoggedIn);
     // verify user rights to access ressources
-    app.use(
-      authGuard([
-        { path: "/login", method: "GET" },
-        { path: "/register", method: "GET" },
-        { path: "/login", method: "POST" },
-        { path: "/register", method: "POST" },
-        { path: "/", method: "GET" },
-      ])
-    );
+    // app.use(
+    //   authGuard([
+    //     { path: "/login", method: "GET" },
+    //     { path: "/register", method: "GET" },
+    //     { path: "/login", method: "POST" },
+    //     { path: "/register", method: "POST" },
+    //     { path: "/", method: "GET" },
+    //   ])
+    // );
 
-    app.use(express.json()); // pour parser content-type:application/json
-    app.use(express.urlencoded({ extended: true })); // pour parser content-type: application/x-www-form-urlencoded
+    // extract session[key] to be used as res.locals[key] to access flash message
+    app.use(flashAlert("flash"));
+
+    app.use(
+      express.json({
+        limit: "50mb",
+      })
+    ); // pour parser content-type:application/json
+    app.use(express.urlencoded({ extended: true, limit: "50mb" })); // pour parser content-type: application/x-www-form-urlencoded
     // true pour utiliser la librairie qs, permets de récuper un objet pur { name: jako,age : 12}
     // false pour utiliser la librairie querystring, permets de récuperer un nested object (objet imbriqué), aussi parse l'url en enlevant le ? de l'url
     // routers
@@ -80,7 +92,9 @@ mongoose
 
     app.get("*", (req, res, next) => {
       try {
-        throw new NotFoundError("Page does not exists, the page you are looking for could have been deleted or moved somewhere else.");
+        throw new NotFoundError(
+          "Page does not exists, the page you are looking for could have been deleted or moved somewhere else."
+        );
       } catch (error) {
         next(error);
       }

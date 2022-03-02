@@ -14,7 +14,7 @@
 <body class="min-vh-100">
     <%- include('./_navbar.ejs') %>
     <main class="min-vh-80 position-relative">
-        <%- include('./_alert.ejs') %>
+        <%- include('./_alert.ejs', {flash}) %>
         <%- body %>
     </main>
     <%- include('./_footer.ejs') %>

@@ -1,4 +1,4 @@
-<%- include('./_form.ejs', {header: 'Edit an article' }) %>
+<%- include('./_form.ejs', {header: 'Edit an article' , type: "update" , action: `/articles/${id}`, article }) %>
 
     <script src="/vendors/quill_v1.3.6/quill.min.js"></script>
     <script>
@@ -7,7 +7,11 @@
                 toolbar: [
                     [{ header: [1, 2, false] }],
                     ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
+                    ['image', 'code-block'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'font': [] }],
+                    [{ 'align': [] }],
+                    ['clean']
                 ]
             },
             placeholder: 'Compose an epic...',
@@ -17,6 +21,13 @@
         editor.on('text-change', function (delta, oldDelta, source) {
             const data = editor.getContents()
             document.querySelector('#content').value = JSON.stringify(data)
+            document.querySelector('#preview').value = document.querySelector("#editor").innerText.replace('\n', ' ');
+            document.querySelector('#imgPreview').value = document.querySelector("#editor img") ? document.querySelector("#editor img").src : ""
         });
+
+        const articleContent = <%- article.content %>;
+        document.querySelector('#content').value = articleContent;
+
+        editor.setContents(articleContent)
 
     </script>

@@ -8,7 +8,7 @@ import { isNotEmpty } from "../lib/validators.js";
         <label class="form-label" for="question-${questionIndex}-answer-1">Answer n°${
       index + 1
     }</label>
-        <input type="text" id="question-${questionIndex}-answer-${index}" name="questions[answers[content]]"
+        <input type="text" id="question-${questionIndex}-answer-${index}" name="answer[${questionIndex}][${index}]"
             class="form-control">
         <span data-validate="required" class="errors text-danger py-2"></span>
     </div>
@@ -50,7 +50,7 @@ import { isNotEmpty } from "../lib/validators.js";
 
             <div class="mb-3">
                 <label class="form-label fw-bolder" for="question-${index}-content">Write the question</label>
-                <input type="text" id="question-${index}-content" name="questions[content]" class="form-control mb-1">
+                <input type="text" id="question-${index}-content" name="questionContent[${index}]" class="form-control mb-1">
                 <span data-validate="required" class="errors text-danger py-2"></span>
             </div>
 
@@ -64,7 +64,7 @@ import { isNotEmpty } from "../lib/validators.js";
                 <div class="mb-3">
                   <div class="w-100 mb-3">
                     <label class="form-label" for="question-${index}-answer-1">Answer n°1</label>
-                    <input type="text" id="question-${index}-answer-1" name="questions[answers[content]]"
+                    <input type="text" id="question-${index}-answer-1" name="answer[${index}][0]"
                         class="form-control">
                     <span data-validate="required" class="errors text-danger py-2"></span>
                   </div>

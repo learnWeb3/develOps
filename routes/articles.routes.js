@@ -7,12 +7,11 @@ const articlesRouter = Router();
 
 articlesRouter.get("/articles/new", async (req, res, next) => {
   try {
-    //const categories = await Category.findAll();
+    const categories = await Category.findAll();
     res.render("articles/new", {
-      categories: [],
+      categories,
     });
   } catch (error) {
-    console.log(error)
     next(error);
   }
 });
@@ -31,9 +30,13 @@ articlesRouter.get("/articles/:id/delete", async (req, res, next) => {
 
 articlesRouter.get("/articles/:id/edit", async (req, res, next) => {
   try {
-    //const categories = await Category.findAll();
+    const {id} = req.params;
+    const categories = await Category.findAll();
+    const article = await Article.findOneWithQuizz(id)
     res.render("articles/edit", {
-      //categories,
+      article,
+      categories,
+      id
     });
   } catch (error) {
     next(error);
@@ -43,7 +46,11 @@ articlesRouter.get("/articles/:id/edit", async (req, res, next) => {
 
 articlesRouter.get("/articles/:id", async (req, res, next) => {
   try {
-    res.render("articles/show", {});
+    const {id} = req.params
+    const article = await Article.findOneWithQuizz(id)
+    res.render("articles/show", {
+      article
+    });
   } catch (error) {
     next(error);
   }
@@ -51,18 +58,47 @@ articlesRouter.get("/articles/:id", async (req, res, next) => {
 
 articlesRouter.post("/articles", async (req, res, next) => {
   try {
-    const { content, title, category } = req.body;
+    const { content, title, category, preview, imgPreview } = req.body;
     const article = await Article.register({
       content,
       title,
       category,
       user: req.session.currentUser,
+      preview,
+      imgPreview
     });
-    res.redirect("/");
+    req.session.flash = {
+      message: 'Article published with success',
+      type: 'success'
+    };
+    res.redirect(`/articles/${article.id}`);
   } catch (error) {
     next(error);
   }
 });
+
+articlesRouter.post("/articles/:id", async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const { content, title, category, preview, imgPreview } = req.body;
+    const article = await Article.saveChange(id,{
+      content,
+      title,
+      category,
+      user: req.session.currentUser,
+      preview,
+      imgPreview
+    });
+    req.session.flash = {
+      message: 'Article updated with success',
+      type: 'success'
+    };
+    res.redirect(`/articles/${article.id}`);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 
 export default articlesRouter;

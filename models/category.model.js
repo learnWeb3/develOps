@@ -10,6 +10,7 @@ const categorySchema = new Schema(
       type: String,
       maxlength: 100,
       minlength: 1,
+      unique: true
     },
   },
   {
@@ -29,8 +30,40 @@ categorySchema.statics.register = async function (data={
   const newCategory = new this({
     label
   });
+
+  const validate = newCategory.validateSync();
+  if(validate !== undefined){
+    throw new BadRequestError(`Validation error: ${validate.message}`)
+  }
+  
   const savedCategory = await newCategory.save();
   return savedCategory;
+};
+
+categorySchema.statics.saveChange = async function (id, data={
+  label: null
+}) {
+  const {label} = data;
+  const category = await this.findOne({
+    _id: id
+  });
+  if(!category){
+    throw new BadRequestError(`Category with id ${id} does not exists`)
+  }
+  if(!label){
+    throw new BadRequestError('Missing required parameters among: label')
+  }
+  Object.assign(category, {
+    label
+  });
+
+  const validate = category.validateSync();
+  if(validate !== undefined){
+    throw new BadRequestError(`Validation error: ${validate.message}`)
+  }
+
+  const updatedCategory = await category.save();
+  return updatedCategory;
 };
 
 

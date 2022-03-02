@@ -18,11 +18,13 @@ const userSchema = new Schema(
       type: String,
       maxlength: 50,
       required: true,
+      unique: true,
     },
     email: {
       type: String,
       maxlength: 50,
       required: true,
+      unique: true,
       validate: {
         validator: function (value) {
           return validator.isEmail(value);

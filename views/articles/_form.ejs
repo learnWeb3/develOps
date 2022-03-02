@@ -1,30 +1,50 @@
 <div class="container">
-    <h1 class="fs-2 my-4">
-        <%= header %>
-    </h1>
-    <form action="" class="col-12">
+
+    <div class="row">
+        <div class="col-9 d-flex align-items-center">
+            <h1 class="fs-2 my-4">
+                <%= header %>
+            </h1>
+        </div>
+        <div class="col-3 d-flex align-items-center justify-content-end">
+            <% if (type === "update"){ %> 
+                <a href="/articles/<%= id %>/delete" class="btn btn-md btn-danger">Supprimer</a>
+            <% } %>
+        </div>
+    </div>
+    
+    <form action="<%= action %>" method="POST" class="col-12">
         <div class="mb-3">
-            <label class="form-label" for="">Select a category</label>
-            <select class="form-select" aria-label="Default select example">
-                <% for(category in categories){ %>
-                    <option value="<%= category.id %>">
+            <label class="form-label" for="catgeory">Select a category</label>
+            <select class="form-select" id="category" name="category" aria-label="Default select example">
+                <% categories.forEach(function(category){ %>
+                    <% if (type === "update"){ %>
+                    <option selected="<%= category.id === article.category %>" value="<%= category.id %>">
                         <%= category.label %>
                     </option>
+                   <% }else{ %>
+                        <option value="<%= category.id %>">
+                            <%= category.label %>
+                        </option>
                     <% } %>
+                <% }); %>
             </select>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="">Choose a title</label>
-            <input type="text" name="title" class="form-control">
+            <label class="form-label" for="title">Choose a title</label>
+            <input type="text" name="title" id="title" class="form-control mb-1" value="<%= type === "update" ? article.title : "" %>">
+            <span data-validate="required" class="errors text-danger py-2"></span>
         </div>
         <div class="mb-3">
             <label class="form-label" for="">What would your like to share ?</label>
 
             <!-- Create the editor container -->
-            <div id="editor" style="min-height: 50vh;">
+            <div id="editor" data-content=<%- type==="update" ? article.content : "" %> style="min-height: 50vh;">
             </div>
 
             <input type="hidden" name="content" id="content">
+            <input type="hidden" name="preview" id="preview">
+            <input type="hidden" name="imgPreview" id="imgPreview">
 
         </div>
 
@@ -42,3 +62,4 @@
         </div>
     </form>
 </div>
+<script src="/js/articles/new.js" type="module"></script>

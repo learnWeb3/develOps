@@ -2,14 +2,13 @@
     <h1 class="fs-2 my-4">
         <%= header %>
     </h1>
-    <form action="" class="col-12" id="articles">
+    <form action="<%= action %>" method="POST" class="col-12" id="articles">
         <div class="mb-3">
             <label class="form-label" for="">Select the related article</label>
-            <select class="form-select" aria-label="Default select example">
-                <option selected>Link your quiz to an article</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+            <select class="form-select" name="article" aria-label="Default select example">
+                <% articles.forEach((article, index)=>{ %>
+                  <option selected="<%= type === "update" ? article.id === quiz.article : index === 0 %>" value="<%= article.id %>"><%= article.title %></option>
+                <% }) %>
             </select>
         </div>
         <div class="mb-3">
@@ -40,7 +39,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bolder" for="question-1-content">Write the question</label>
-                        <input type="text" id="question-1-content" name="questions[content]" class="form-control mb-1">
+                        <input type="text" id="question-1-content" name="questionContent[0]" class="form-control mb-1">
                         <span data-validate="required" class="errors text-danger py-2"></span>
                     </div>
 
@@ -56,7 +55,7 @@
                         <div class="mb-3">
                             <div class="w-100 mb-3">
                                 <label class="form-label" for="question-1-answer-1">Answer n°1</label>
-                                <input type="text" id="question-1-answer-1" name="questions[answers[content]]"
+                                <input type="text" id="question-1-answer-1" name="answer[0][0]"
                                     class="form-control">
                                 <span data-validate="required" class="errors text-danger py-2"></span>
                             </div>

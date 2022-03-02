@@ -1,6 +1,20 @@
 import { UnauthorizedError } from "../base/errors/index.js";
 import { roles } from "../models/user.model.js";
 
+export function flashAlert(sessionKey) {
+  return function (req, res, next) {
+    if (req.session && req.session[sessionKey]) {
+      res.locals[sessionKey] = req.session[sessionKey];
+    } else {
+      res.locals[sessionKey] = {
+        message: null,
+        type: null,
+      };
+    }
+    next();
+  };
+}
+
 /**
  *
  * @param {*} req

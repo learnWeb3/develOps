@@ -1,4 +1,4 @@
-<%- include('./_form.ejs', {header: 'Publish a new article' }) %>
+<%- include('./_form.ejs', {header: 'Publish a new article', type: "create", action: '/articles' }) %>
 
     <script src="/vendors/quill_v1.3.6/quill.min.js"></script>
     <script>
@@ -22,6 +22,8 @@
         editor.on('text-change', function (delta, oldDelta, source) {
            const data = editor.getContents()
            document.querySelector('#content').value = JSON.stringify(data)
+           document.querySelector('#preview').value = document.querySelector("#editor").innerText.replace('\n', ' ');
+           document.querySelector('#imgPreview').value = document.querySelector("#editor img") ? document.querySelector("#editor img").src : ""
         });
 
     </script>

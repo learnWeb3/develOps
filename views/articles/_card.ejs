@@ -1,16 +1,20 @@
 <div class="card">
-    <img src="..." class="card-img-top" alt="...">
+    <img src="<%= article.imgPreview ? article.imgPreview : "/images/articles/image_placeholder.png" %>"
+    class="card-img-top" alt="...">
     <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
-            additional content. This content is a little bit longer.</p>
+        <h5 class="card-title">
+            <%= article.title %> %>
+        </h5>
+        <p class="card-text">
+            <%= article.preview %>
+        </p>
         <% if (isLoggedIn){ %>
-          <a href="/articles/:id" class="btn btn-primary">See more</a>
-        <% } else { %>
-         <a href="/login" class="btn btn-primary">Login to see more</a>
-        <% } %>
+                <a href="/articles/<%= article.id %>" class="btn btn-primary stretched-link">See more</a>
+            <% } else { %>
+               <a href="/login" class="btn btn-primary stretched-link">Login to see more</a>
+            <% } %>
     </div>
     <div class="card-footer text-muted">
-        Date
+        <%= article.createdAt %>
     </div>
 </div>

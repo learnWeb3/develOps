@@ -1,0 +1,18 @@
+<div class="container">
+    <h1 class="fs-2 my-4">
+        <%= header %>
+    </h1>
+    <form action="<%= action %>" method="POST" class="col-12">
+        <div class="mb-3">
+            <label class="form-label" for="label">Choose a label</label>
+            <% if (type === "update"){ %>
+                <input type="text" name="label" id="label" class="form-control mb-1" value="<%= category.label %>">
+            <% }else{ %>
+                <input type="text" name="label" id="label" class="form-control mb-1">
+            <% } %>
+            <span data-validate="required" class="errors text-danger py-2"></span>
+        </div>
+        <button type="submit" class="btn btn-lg btn-success">Submit</button>
+    </form>
+</div>
+<script src="/js/categories/new.js" type="module"></script>
