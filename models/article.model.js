@@ -5,7 +5,7 @@ import User from "./user.model.js";
 import { sliceStringAsPreview } from "../base/utils.js";
 import moment from "moment";
 import Quiz from "./quiz.model.js";
-import Question from "./question.model.js";
+
 const { Schema, model } = mongoose;
 const {
   Types: { ObjectId, Mixed },
@@ -44,49 +44,53 @@ const articleSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters:true, virtuals: true }
+    toObject: { getters: true, virtuals: true },
   }
 );
 
-articleSchema.pre('remove', function(next){
+// DB HOOKS (DB TX MIDDLEWARE)
+
+// AUTOREMOVE (CASCADE LIKE)
+articleSchema.pre("remove", function (next) {
   Quiz.remove({
-    article: this._id
+    article: this._id,
   });
   next();
-})
+});
 
-articleSchema.pre('findOne', function(next){
+// AUTOPOPULATE
+articleSchema.pre("findOne", function (next) {
   this.populate({
-    path: "quiz"
-  })
-  next()
-})
+    path: "quiz",
+  });
+  next();
+});
 
-articleSchema.pre('findOne', function(next){
+articleSchema.pre("findOne", function (next) {
   this.populate({
-    path: "quizCount"
-  })
-  next()
-})
+    path: "quizCount",
+  });
+  next();
+});
 
 articleSchema.virtual("quiz", {
-  ref: 'Quiz',
+  ref: "Quiz",
   localField: "_id",
   foreignField: "article",
 });
 
 articleSchema.virtual("quizCount", {
-  ref: 'Quiz',
+  ref: "Quiz",
   localField: "_id",
   foreignField: "article",
   count: true,
 });
 
-
+// CLASS METHODS
 articleSchema.statics.findOneWithQuizz = async function (id) {
   const article = await this.findOne({
     _id: id,
-  })
+  });
   article.content = article.content;
   if (!article) {
     throw new NotFoundError(
@@ -136,12 +140,12 @@ articleSchema.statics.saveChange = async function (id, update = {}) {
     title,
     content: content,
     preview: sliceStringAsPreview(preview, 50),
-    imgPreview
+    imgPreview,
   });
 
   const validate = article.validateSync();
-  if(validate !== undefined){
-    throw new BadRequestError(`Validation error: ${validate.message}`)
+  if (validate !== undefined) {
+    throw new BadRequestError(`Validation error: ${validate.message}`);
   }
 
   const updatedArticle = await article.save();
@@ -162,7 +166,7 @@ articleSchema.statics.register = async function (
     title: null,
     content: null,
     preview: null,
-    imgPreview: null
+    imgPreview: null,
   }
 ) {
   const { user, category, title, content, preview, imgPreview } = data;
@@ -195,12 +199,12 @@ articleSchema.statics.register = async function (
     title,
     content: content,
     preview: sliceStringAsPreview(preview, 50),
-    imgPreview
+    imgPreview,
   });
 
   const validate = newArticle.validateSync();
-  if(validate !== undefined){
-    throw new BadRequestError(`Validation error: ${validate.message}`)
+  if (validate !== undefined) {
+    throw new BadRequestError(`Validation error: ${validate.message}`);
   }
 
   const savedArticle = await newArticle.save();

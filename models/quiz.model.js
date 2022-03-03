@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
-import { BadRequestError } from "../base/errors/index.js";
+import { BadRequestError, InternalServerError, UnauthorizedError } from "../base/errors/index.js";
 import Question from "./question.model.js";
 import Answer from "./answer.model.js";
 import Article from "./article.model.js";
+import User from "./user.model.js";
+import UserAnswer from "./user_answer.model.js";
 
 const { Schema, model } = mongoose;
 const {
@@ -26,10 +28,13 @@ const quizSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters:true,virtuals: true }
+    toObject: { getters: true, virtuals: true },
   }
 );
 
+// HOOKS (DB MIDDLEWARE)
+
+// AUTOREMOVE
 quizSchema.pre("remove", function (next) {
   Question.remove({
     quiz: this._id,
@@ -37,40 +42,117 @@ quizSchema.pre("remove", function (next) {
   next();
 });
 
-quizSchema.pre('find', function(next){
-  this.populate('questions')
-  next()
-})
+// AUTOPOPULATE
+quizSchema.pre("find", function (next) {
+  this.populate("questions");
+  next();
+});
 
-quizSchema.pre('findOne', function(next){
-  this.populate('questions')
-  next()
-})
+quizSchema.pre("findOne", function (next) {
+  this.populate("questions");
+  next();
+});
 
-quizSchema.pre('find', function(next){
-  this.populate('questionsCount')
-  next()
-})
+quizSchema.pre("find", function (next) {
+  this.populate("questionsCount");
+  next();
+});
 
-quizSchema.pre('findOne', function(next){
-  this.populate('questionsCount')
-  next()
-})
+quizSchema.pre("findOne", function (next) {
+  this.populate("questionsCount");
+  next();
+});
 
-
+// VIRTUAL ATTRIBUTES
 quizSchema.virtual("questions", {
-  ref: 'Question',
+  ref: "Question",
   localField: "_id",
   foreignField: "quiz",
 });
 
 quizSchema.virtual("questionsCount", {
-  ref: 'Question',
+  ref: "Question",
   localField: "_id",
   foreignField: "quiz",
-  count: true
+  count: true,
 });
 
+// CLASS METHODS
+quizSchema.statics.registerAnswer = async function (
+  id = null,
+  data = {
+    question: null,
+    current_user: null,
+  }
+) {
+  if (!id) {
+    throw new BadRequestError(`Missing required parameters among: id`);
+  }
+
+  const quizzModel = await this.findOne({
+    _id: id,
+  });
+
+  if (!quizzModel) {
+    throw new BadRequestError(`Quiz with id: ${id} does not exists`);
+  }
+
+  const { current_user, question } = data;
+  if (!current_user || !question) {
+    throw new BadRequestError(
+      `Missing required parameters among: question, current_user`
+    );
+  }
+
+  const currentUserModel = await User.findOne({
+    _id: current_user,
+  });
+
+  if (!currentUserModel) {
+    throw new UnauthorizedError(`You must be logged in to perform this action`);
+  }
+
+  const quizQuestions = await this.findOne({
+    _id: id,
+  }).then((quiz) => quiz.questions);
+
+
+  const userAnswers = [];
+
+  try {
+    for (let i = 0; i < quizQuestions.length; i++) {
+      const availableAnswers = quizQuestions[i].answers;
+      const validAnswer = availableAnswers.find((answer) => answer.isValid);
+      const userAnswerIsValid = validAnswer._id === question[i];
+      const data = {
+        user: current_user,
+        question: quizQuestions[i]._id,
+        answer: question[i],
+        isValid: userAnswerIsValid,
+      }
+      const userAnswer = await UserAnswer.register(data);
+      userAnswers.push(userAnswer);
+      return ({
+        quiz: id,
+        userAnswers,
+      })
+    }
+  } catch (error) {
+    // delete registered answers
+    if(userAnswers.length){
+      try {
+        for(const userAnswer of userAnswers){
+          await UserAnswer.deleteOne({
+            _id: userAnswer._id
+          })
+        }
+      } catch (error) {
+        throw new InternalServerError('An unexpected error occured, we are investigating the issue, please try again later.')
+      }
+    }
+    throw new InternalServerError('An unexpected error occured, we are investigating the issue, please try again later.')
+  }
+};
 
 quizSchema.statics.register = async function (
   data = {
@@ -172,7 +254,7 @@ quizSchema.statics.register = async function (
 
   return {
     quiz: newQuiz,
-    questions: quizQuestions,
+    questions: quizQuestions
   };
 };
 

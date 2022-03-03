@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { BadRequestError } from "../base/errors/index.js";
 import Quiz from "./quiz.model.js";
 import Answer from "./answer.model.js";
+import UserAnswer from "./user_answer.model.js";
 const { Schema, model } = mongoose;
 const {
   Types: { ObjectId },
@@ -26,6 +27,9 @@ const questionSchema = new Schema(
   }
 );
 
+// DB HOOKS (DB TX MIDDLEWARE)
+
+// AUTOREMOVE (CASCADE DELETION LIKE)
 questionSchema.pre('remove', function(next){
   Answer.remove({
     question: this._id
@@ -33,6 +37,14 @@ questionSchema.pre('remove', function(next){
   next()
 })
 
+questionSchema.pre('remove', function(next){
+  UserAnswer.remove({
+    question: this._id
+  });
+  next()
+})
+
+// AUTOPOPULATE
 questionSchema.pre('find', function(next){
   this.populate('answers')
   next()
@@ -53,7 +65,7 @@ questionSchema.pre('findOne', function(next){
   next()
 })
 
-
+// VIRTUAL ATTRIBUTES
 questionSchema.virtual("answers", {
   ref: 'Answer',
   localField: "_id",

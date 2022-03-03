@@ -11,87 +11,94 @@ const categorySchema = new Schema(
       type: String,
       maxlength: 100,
       minlength: 1,
-      unique: true
+      unique: true,
     },
   },
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters:true,virtuals: true }
+    toObject: { getters: true, virtuals: true },
   }
-
 );
 
+// DB HOOKS (DB TX MIDDLEWARE)
+
+// AUTOREMOVE (CASCADE LIKE)
+categorySchema.pre("remove", function (next) {
+  Article.remove({
+    category: this._id,
+  });
+  next();
+});
+
+// VIRTUAL ATTRIBUTES
 categorySchema.virtual("articles", {
-  ref: 'Article',
+  ref: "Article",
   localField: "_id",
   foreignField: "article",
 });
 
 categorySchema.virtual("articlesCount", {
-  ref: 'Article',
+  ref: "Article",
   localField: "_id",
   foreignField: "article",
   count: true,
 });
 
-categorySchema.pre('remove', function(next){
-  Article.remove({
-    category: this._id
-  });
-  next()
-})
-
-categorySchema.statics.register = async function (data={
-  label: null
-}) {
-  const {label} = data;
-  if(!label){
-    throw new BadRequestError('Missing required parameters among: label')
+// CLASS METHODS
+categorySchema.statics.register = async function (
+  data = {
+    label: null,
+  }
+) {
+  const { label } = data;
+  if (!label) {
+    throw new BadRequestError("Missing required parameters among: label");
   }
   const newCategory = new this({
-    label
+    label,
   });
 
   const validate = newCategory.validateSync();
-  if(validate !== undefined){
-    throw new BadRequestError(`Validation error: ${validate.message}`)
+  if (validate !== undefined) {
+    throw new BadRequestError(`Validation error: ${validate.message}`);
   }
-  
+
   const savedCategory = await newCategory.save();
   return savedCategory;
 };
 
-categorySchema.statics.saveChange = async function (id, data={
-  label: null
-}) {
-  const {label} = data;
-  const category = await this.findOne({
-    _id: id
-  });
-  if(!category){
-    throw new BadRequestError(`Category with id ${id} does not exists`)
+categorySchema.statics.saveChange = async function (
+  id,
+  data = {
+    label: null,
   }
-  if(!label){
-    throw new BadRequestError('Missing required parameters among: label')
+) {
+  const { label } = data;
+  const category = await this.findOne({
+    _id: id,
+  });
+  if (!category) {
+    throw new BadRequestError(`Category with id ${id} does not exists`);
+  }
+  if (!label) {
+    throw new BadRequestError("Missing required parameters among: label");
   }
   Object.assign(category, {
-    label
+    label,
   });
 
   const validate = category.validateSync();
-  if(validate !== undefined){
-    throw new BadRequestError(`Validation error: ${validate.message}`)
+  if (validate !== undefined) {
+    throw new BadRequestError(`Validation error: ${validate.message}`);
   }
 
   const updatedCategory = await category.save();
   return updatedCategory;
 };
 
-
 categorySchema.statics.findAll = async function () {
   return await this.find({});
 };
-
 
 export default model("Category", categorySchema);

@@ -7,6 +7,7 @@ import {
 } from "../base/errors/index.js";
 import bcrypt from "bcrypt";
 import Article from "./article.model.js";
+import UserAnswer from "./user_answer.model.js";
 
 const { Schema, model } = mongoose;
 const {
@@ -73,6 +74,40 @@ const userSchema = new Schema(
   }
 );
 
+// HOOKS (DB MIDDLEWARES);
+
+// AUTOPOPULATE (TRANSACTION SPEED COST)
+userSchema.pre("find", function (next) {
+  this.populate("articles");
+  next();
+});
+
+userSchema.pre("findOne", function (next) {
+  this.populate("articles");
+  next();
+});
+
+userSchema.pre("find", function (next) {
+  this.populate("articlesCount");
+  next();
+});
+
+userSchema.pre("findOne", function (next) {
+  this.populate("articlesCount");
+  next();
+});
+
+userSchema.pre("find", function (next) {
+  this.populate("answers");
+  next();
+});
+
+userSchema.pre("findOne", function (next) {
+  this.populate("answersCount");
+  next();
+});
+
+// AUTOREMOVE RELATED RECORDS (DATA INTEGRITY)
 userSchema.pre("remove", function (next) {
   Article.remove({
     user: this._id,
@@ -80,6 +115,14 @@ userSchema.pre("remove", function (next) {
   next();
 });
 
+userSchema.pre("remove", function (next) {
+  UserAnswer.remove({
+    user: this._id,
+  });
+  next();
+});
+
+// VIRTUAL ATTRIBUTES (REALTIONS*)
 userSchema.virtual("articles", {
   ref: "Article",
   localField: "_id",
@@ -93,6 +136,20 @@ userSchema.virtual("articlesCount", {
   count: true,
 });
 
+userSchema.virtual("answers", {
+  ref: "UserAnswer",
+  localField: "_id",
+  foreignField: "user",
+});
+
+userSchema.virtual("answersCount", {
+  ref: "UserAnswer",
+  localField: "_id",
+  foreignField: "user",
+  count: true,
+});
+
+// INSTANCE METHODS
 userSchema.methods.hashPassword = async function () {
   const saltRounds = 10;
   const hash = await new Promise((resolve, reject) =>
@@ -108,6 +165,23 @@ userSchema.methods.hashPassword = async function () {
   return this;
 };
 
+userSchema.methods.passwordVerify = async function (textPassword) {
+  const check = await new Promise((resolve, reject) =>
+    bcrypt.compare(textPassword, this.password, function (err, result) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    })
+  );
+
+  if (!check) {
+    throw new ForbiddenError("invalid credentials");
+  }
+};
+
+// CLASS METHODS
 userSchema.statics.saveChange = async function (
   id = null,
   data = {
@@ -256,22 +330,6 @@ userSchema.statics.register = async function (
   await newUser.hashPassword();
   const savedUser = await newUser.save();
   return savedUser;
-};
-
-userSchema.methods.passwordVerify = async function (textPassword) {
-  const check = await new Promise((resolve, reject) =>
-    bcrypt.compare(textPassword, this.password, function (err, result) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    })
-  );
-
-  if (!check) {
-    throw new ForbiddenError("invalid credentials");
-  }
 };
 
 userSchema.statics.login = async function (data = { email, password }) {

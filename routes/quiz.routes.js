@@ -32,6 +32,25 @@ quizRouter.get("/quiz/:id/edit", async (req, res, next) => {
   }
 });
 
+quizRouter.post('/quiz/:id/validate', async (req, res, next)=>{
+  try {
+    const {id} = req.params;
+    const {question} = req.body;
+    const current_user = req.session.currentUser
+    const data = await Quiz.registerAnswer(id, {
+      question,
+      current_user
+    })
+    req.session.flash = {
+      message: 'Answer registered with success',
+      type: 'success'
+    };
+    res.redirect('/')
+  } catch (error) {
+    next(error)
+  }
+})
+
 quizRouter.post("/quiz", async (req, res, next) => {
   try {
      const {

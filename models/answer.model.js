@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { BadRequestError } from "../base/errors/index.js";
 import Question from "./question.model.js";
+import UserAnswer from "./user_answer.model.js";
 const { Schema, model } = mongoose;
 const {
   Types: { ObjectId },
@@ -32,6 +33,17 @@ const answerSchema = new Schema(
   }
 );
 
+// DB HOOKS
+
+// AUTOREMOVE (DATA INTEGRITY)
+answerSchema.pre('remove',  function(next){
+  UserAnswer.deleteOne({
+    answer: this._id
+  });
+  next()
+})
+
+// CLASS METHODS
 answerSchema.statics.register = async function (
   data = {
     content: null,
