@@ -30,16 +30,22 @@ const questionSchema = new Schema(
 // DB HOOKS (DB TX MIDDLEWARE)
 
 // AUTOREMOVE (CASCADE DELETION LIKE)
-questionSchema.pre('remove', function(next){
-  Answer.remove({
-    question: this._id
-  });
-  next()
-})
 
-questionSchema.pre('remove', function(next){
-  UserAnswer.remove({
+questionSchema.pre('deleteOne', {document: true, query: false}, async function(next){
+  console.log('running')
+  await Answer.find({
     question: this._id
+  }).then(async (answers)=>{
+    for(const answer of answers){
+      await answer.deleteOne()
+    }
+  });
+  await UserAnswer.find({
+    question: this._id
+  }).then(async (userAnswers)=>{
+    for(const userAnswer of userAnswers){
+      await userAnswer.deleteOne()
+    }
   });
   next()
 })

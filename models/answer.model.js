@@ -29,19 +29,25 @@ const answerSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { getters:true,virtuals: true }
+    toObject: { getters: true, virtuals: true },
   }
 );
 
 // DB HOOKS
 
 // AUTOREMOVE (DATA INTEGRITY)
-answerSchema.pre('remove',  function(next){
-  UserAnswer.deleteOne({
-    answer: this._id
-  });
-  next()
-})
+answerSchema.pre(
+  "deleteOne", {document: true, query: false},
+  async function (next) {
+    return UserAnswer.find({
+      answer: this._id,
+    }).then(async (userAnswers)=>{
+      for(const userAnswer of userAnswers){
+        return await userAnswer.deleteOne()
+      }
+    }).then(()=>next())
+  }
+);
 
 // CLASS METHODS
 answerSchema.statics.register = async function (

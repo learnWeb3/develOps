@@ -19,9 +19,10 @@ articlesRouter.get("/articles/new", async (req, res, next) => {
 articlesRouter.get("/articles/:id/delete", async (req, res, next) => {
   try {
     const { id } = req.params;
-    await Article.deleteOne({
-      _id: id,
+    const article = await Article.findOne({
+      _id: id
     });
+    await article.deleteOne();
     req.session.flash = {
       message: 'Article deleted with success',
       type: 'success'

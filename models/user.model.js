@@ -108,19 +108,25 @@ userSchema.pre("findOne", function (next) {
 });
 
 // AUTOREMOVE RELATED RECORDS (DATA INTEGRITY)
-userSchema.pre("remove", function (next) {
-  Article.remove({
+userSchema.pre("deleteOne", {document: true, query: false},  async function (next) {
+  console.log('running')
+  await Article.find({
     user: this._id,
+  }).then(async (articles)=>{
+    for(const article of articles){
+      await article.deleteOne()
+    }
   });
-  next();
+  await UserAnswer.find({
+    user: this._id,
+  }).then(async (userAnswers)=>{
+    for(const userAnswer of userAnswers){
+      await userAnswer.deleteOne()
+    }
+  })
+  next()
 });
 
-userSchema.pre("remove", function (next) {
-  UserAnswer.remove({
-    user: this._id,
-  });
-  next();
-});
 
 // VIRTUAL ATTRIBUTES (REALTIONS*)
 userSchema.virtual("articles", {

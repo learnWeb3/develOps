@@ -24,12 +24,24 @@ const categorySchema = new Schema(
 // DB HOOKS (DB TX MIDDLEWARE)
 
 // AUTOREMOVE (CASCADE LIKE)
-categorySchema.pre("remove", function (next) {
-  Article.remove({
-    category: this._id,
-  });
-  next();
-});
+
+categorySchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    return Article.find({
+      category: this._id,
+    })
+      .then(
+        async (articles) =>{
+          for(const article of articles){
+            await article.deleteOne()
+          }
+        }
+      )
+      .then(() => next());
+  }
+);
 
 // VIRTUAL ATTRIBUTES
 categorySchema.virtual("articles", {

@@ -51,11 +51,16 @@ const articleSchema = new Schema(
 // DB HOOKS (DB TX MIDDLEWARE)
 
 // AUTOREMOVE (CASCADE LIKE)
-articleSchema.pre("remove", function (next) {
-  Quiz.remove({
-    article: this._id,
-  });
-  next();
+
+articleSchema.pre("deleteOne", {document: true, query: false},  async function (next) {
+  console.log('running')
+  return Quiz.find({
+    article: this._id
+  }).then(async(quizs)=>{
+    for(const quiz of quizs){
+      return await quiz.deleteOne()
+    }
+  }).then(()=> next())
 });
 
 // AUTOPOPULATE

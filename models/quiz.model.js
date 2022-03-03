@@ -35,9 +35,14 @@ const quizSchema = new Schema(
 // HOOKS (DB MIDDLEWARE)
 
 // AUTOREMOVE
-quizSchema.pre("remove", function (next) {
-  Question.remove({
+quizSchema.pre("deleteOne", {document: true, query: false},  async function (next) {
+  console.log('running')
+  await Question.find({
     quiz: this._id,
+  }).then(async (questions)=>{
+    for(const question of questions){
+      await question.deleteOne()
+    }
   });
   next();
 });
