@@ -5,6 +5,7 @@ export function flashAlert(sessionKey) {
   return function (req, res, next) {
     if (req.session && req.session[sessionKey]) {
       res.locals[sessionKey] = req.session[sessionKey];
+      delete req.session[sessionKey];
     } else {
       res.locals[sessionKey] = {
         message: null,
@@ -24,8 +25,10 @@ export function flashAlert(sessionKey) {
 export function isLoggedIn(req, res, next) {
   if (req.session.currentUser) {
     res.locals.isLoggedIn = true;
+    res.locals.currentUser = req.session.currentUser;
   } else {
     res.locals.isLoggedIn = false;
+    res.locals.currentUser = null;
   }
   next();
 }
@@ -37,12 +40,49 @@ export function isLoggedIn(req, res, next) {
  * @param {*} next
  */
 export function isAdmin(req, res, next) {
-  if (req.session.currentUser) {
-    res.locals.isAdmin = req.session.currentUser.role === roles.admin;
+  if (req.session.role) {
+    res.locals.isAdmin = req.session.role === roles.admin;
   } else {
-    res.locals.isAdmin = null;
+    res.locals.isAdmin = false;
   }
   next();
+}
+
+/**
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+export function adminGuard(protectedPaths = []) {
+  return function (req, res, next) {
+    const isProtectedPath = protectedPaths.find(({ match, method }) => {
+      const regex = new RegExp(match);
+      // console.log(regex.test(req.url))
+      return req.method === method && regex.test(req.url);
+    });
+    if (isProtectedPath) {
+      if (req.session && req.session.role !== undefined) {
+        if (req.session.role === roles.admin) {
+          next();
+        } else {
+          next(
+            new UnauthorizedError(
+              `You do not have the rights to perform this action`
+            )
+          );
+        }
+      } else {
+        next(
+          new UnauthorizedError(
+            `You must be logged in in order to perform this action.`
+          )
+        );
+      }
+    } else {
+      next();
+    }
+  };
 }
 /**
  *
@@ -59,12 +99,15 @@ export function authGuard(unlessPaths = []) {
       if (currentUser) {
         next();
       } else {
-        throw new UnauthorizedError(
-          "You must be logged in to access this ressource"
+        next(
+          new UnauthorizedError(
+            "You must be logged in to access this ressource"
+          )
         );
       }
+    } else {
+      next();
     }
-    next();
   };
 }
 

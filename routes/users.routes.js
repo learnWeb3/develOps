@@ -19,6 +19,7 @@ usersRouter.post("/login", async (req, res, next) => {
       password,
     });
     req.session.currentUser = user.id;
+    req.session.role = user.role;
     req.session.flash = {
       message: 'Logged in successfully',
       type: 'success'
@@ -82,6 +83,7 @@ usersRouter.post("/register", async (req, res, next) => {
 usersRouter.get("/logout", async (req, res, next) => {
   try {
     delete req.session.currentUser;
+    delete req.session.role
     req.session.flash = {
       message: "Logged out successfully",
       type: "success",

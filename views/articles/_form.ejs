@@ -1,15 +1,28 @@
 <div class="container">
 
-    <div class="row">
-        <div class="col-9 d-flex align-items-center">
+    <!-- <div class="row my-4">
+        <div class="col-12 d-flex align-items-center">
+           <a href="/categories/new" class="btn btn-md btn-primary text-decoration-none">New category</a>
+        </div>
+    </div> -->
+
+    <div class="row d-flex flex-column-reverse flex-md-row">
+        <div class="col-12 col-md-6 d-flex align-items-center">
             <h1 class="fs-2 my-4">
                 <%= header %>
             </h1>
         </div>
-        <div class="col-3 d-flex align-items-center justify-content-end">
-            <% if (type === "update"){ %> 
-                <a href="/articles/<%= id %>/delete" class="btn btn-md btn-danger">Supprimer</a>
-            <% } %>
+        <div class="col-12 col-md-6 d-flex align-items-center justify-content-start justify-content-md-end">
+            <div class="row col-12 col-md-8 mt-4 mt-md-0">
+                <div class="col-6">
+                    <a href="/categories/new" class="btn btn-md btn-secondary text-decoration-none col-12">Category</a>
+                </div>
+                <div class="col-6">
+                    <% if (type === "update"){ %> 
+                        <a href="/articles/<%= id %>/delete" class="btn btn-md btn-danger col-12">Supprimer</a>
+                    <% } %>
+                </div>
+            </div>
         </div>
     </div>
     

@@ -5,7 +5,7 @@ import Article from "../models/article.model.js";
 
 const articlesRouter = Router();
 
-articlesRouter.get("/articles/new", async (req, res, next) => {
+articlesRouter.get( "/articles/new", async (req, res, next) => {
   try {
     const categories = await Category.findAll();
     res.render("articles/new", {

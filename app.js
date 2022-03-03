@@ -8,6 +8,8 @@ import {
   isLoggedIn,
   authGuard,
   flashAlert,
+  adminGuard,
+  isAdmin,
 } from "./middlewares/index.js";
 import session from "express-session";
 import favicon from "serve-favicon";
@@ -41,7 +43,7 @@ mongoose
     app.set("view engine", "ejs"); // moteur de modèle à utiliser
     app.use(expressLayouts); // additionnal middleware to have extended layout capabilities
     app.set("layout extractScripts", true); // extract partials scripts to script tag just before body tag close
-    app.set('extractStyles', true) // extract partials style to style tag in layout
+    app.set("extractStyles", true); // extract partials style to style tag in layout
     app.set("layout", "./layouts/layout");
 
     app.use(express.static("public")); // ASSETS
@@ -59,21 +61,33 @@ mongoose
       })
     );
 
-    // verify if a user is logged in and set isLoggedIn property on res.locals
-    app.use(isLoggedIn);
-    // verify user rights to access ressources
-    // app.use(
-    //   authGuard([
-    //     { path: "/login", method: "GET" },
-    //     { path: "/register", method: "GET" },
-    //     { path: "/login", method: "POST" },
-    //     { path: "/register", method: "POST" },
-    //     { path: "/", method: "GET" },
-    //   ])
-    // );
-
     // extract session[key] to be used as res.locals[key] to access flash message
     app.use(flashAlert("flash"));
+
+    // verify if a user is logged in and set isLoggedIn property on res.locals
+    app.use(isLoggedIn);
+    // verify if a user has admin rights and set isAdmin property on res.locals
+    app.use(isAdmin);
+    // verify user rights to access ressources
+    app.use(
+      authGuard([
+        { path: "/login", method: "GET" },
+        { path: "/register", method: "GET" },
+        { path: "/login", method: "POST" },
+        { path: "/register", method: "POST" },
+        { path: "/", method: "GET" },
+      ])
+    );
+
+    app.use(
+      adminGuard([
+        { match: "/articles/new", method: "GET" },
+        { match: "/articles/?.+", method: "POST" },
+        { match: "/articles/?.+/edit", method: "GET" },
+        { match: "/articles/?.+/delete", method: "GET" },
+        { match: "/articles", method: "POST" },
+      ])
+    );
 
     app.use(
       express.json({

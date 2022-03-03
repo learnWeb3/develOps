@@ -37,7 +37,7 @@ import {
 
     const validateUsername = (usernameInput, usernameErrorsSpan, value) => {
       const { isValid, errors } = isValidUsername(value);
-      if (isValid) {
+      if (isValid || value === "") {
         usernameInput.classList.remove(...errorsClasses);
         usernameErrorsSpan.innerHTML = "";
       } else {
@@ -46,7 +46,7 @@ import {
         const textNode = document.createTextNode(errors.join(", "));
         usernameErrorsSpan.appendChild(textNode);
       }
-      return isValid;
+      return isValid || value === "";
     };
 
     const validateEmail = (emailInput, emailErrorsSpan, value) => {
@@ -65,7 +65,7 @@ import {
 
     const validatePassword = (passwordInput, passwordErrorsSpan, value) => {
       const { isValid, errors } = isValidPassword(value);
-      if (isValid) {
+      if (isValid || value === "") {
         passwordInput.classList.remove(...errorsClasses);
         passwordErrorsSpan.innerHTML = "";
       } else {
@@ -74,7 +74,7 @@ import {
         const textNode = document.createTextNode(errors.join(", "));
         passwordErrorsSpan.appendChild(textNode);
       }
-      return isValid;
+      return isValid || value === "";
     };
 
     const validatePasswordConfirmation = (

@@ -29,6 +29,8 @@
                 </form>
         <% }) %>
 
+
+        <% if(isAdmin){%>
         <hr>
 
         <p class="fs-4 my-4">Administration zone</p>
@@ -44,6 +46,8 @@
                         <a href="/articles/<%= article.id %>/delete" class="btn-lg btn-danger text-decoration-none text-center w-100">DELETE</a>
                 </div>
         </div>
+
+        <% } %>
      
 </div>
 <script src="/js/articles/show.js"></script>

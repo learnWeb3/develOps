@@ -4,14 +4,19 @@
             <h1 class="col-12 col-lg-8 offset-lg-col-2 my-4 fs-2">My Account</h1>
             <form id="me" action="/users/<%= user.id %>" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
                 <div class="mb-3">
-                    <label class="form-label" for="">Username</label>
-                    <input type="text" name="username" class="form-control mb-1">
-                    <span data-for="username" class="errors text-danger py-2"></span>
+                    <label class="form-label" for="">Email address *</label>
+                    <input type="text" name="email" class="form-control mb-1" value="<%= user.email %>">
+                    <span data-for="email" class="errors text-danger py-2"></span>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="">Email address</label>
-                    <input type="text" name="email" class="form-control mb-1">
-                    <span data-for="email" class="errors text-danger py-2"></span>
+                    <label class="form-label" for="">Current password *</label>
+                    <input type="password" name="current_password" class="form-control mb-1">
+                    <span data-for="current_password" class="errors text-danger py-2"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="">Username</label>
+                    <input type="text" name="username" class="form-control mb-1" value="<%= user.username %>">
+                    <span data-for="username" class="errors text-danger py-2"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="">Password</label>
@@ -22,11 +27,6 @@
                     <label class="form-label" for="">Password Confirmation</label>
                     <input type="password" name="password_confirmation" class="form-control mb-1">
                     <span data-for="password_confirmation" class="errors text-danger py-2"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="">Current password</label>
-                    <input type="password" name="current_password" class="form-control mb-1">
-                    <span data-for="current_password" class="errors text-danger py-2"></span>
                 </div>
                 <button type="submit" class="btn btn-md btn-success col-12 disabled">
                     Submit

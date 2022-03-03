@@ -92,7 +92,6 @@ userSchema.pre("find", function (next) {
   next();
 });
 
-
 userSchema.pre("findOne", function (next) {
   this.populate("articlesCount");
   next();
@@ -102,7 +101,6 @@ userSchema.pre("find", function (next) {
   this.populate("answers");
   next();
 });
-
 
 userSchema.pre("find", function (next) {
   this.populate("answersCount");
@@ -120,23 +118,26 @@ userSchema.pre("findOne", function (next) {
 });
 
 // AUTOREMOVE RELATED RECORDS (DATA INTEGRITY)
-userSchema.pre("deleteOne", {document: true, query: false},  async function (next) {
-  console.log('running')
-  const articles = await Article.find({
-    user: this._id,
-  })
-  for(const article of articles){
-    await article.deleteOne()
+userSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    console.log("running");
+    const articles = await Article.find({
+      user: this._id,
+    });
+    for (const article of articles) {
+      await article.deleteOne();
+    }
+    const userAnswers = await UserAnswer.find({
+      user: this._id,
+    });
+    for (const userAnswer of userAnswers) {
+      await userAnswer.deleteOne();
+    }
+    next();
   }
-  const userAnswers = await UserAnswer.find({
-    user: this._id,
-  })
-  for(const userAnswer of userAnswers){
-    await userAnswer.deleteOne()
-  }
-  next()
-});
-
+);
 
 // VIRTUAL ATTRIBUTES (REALTIONS*)
 userSchema.virtual("articles", {
@@ -223,13 +224,11 @@ userSchema.statics.saveChange = async function (
     throw new BadRequestError(`Missing user id`);
   }
 
-  if (!username || !password || !email || !password_confirmation) {
-    throw new BadRequestError(
-      "Missing required parameter among username, password, password_confirmation, email"
-    );
+  if(!email || !current_password){
+    throw new BadRequestError(`Missing required parameter among: email, current_password`);
   }
 
-  if (password !== password_confirmation) {
+  if (password && password_confirmation && password !== password_confirmation) {
     throw new BadRequestError("Password does not match password confirmation");
   }
 
@@ -239,13 +238,27 @@ userSchema.statics.saveChange = async function (
   const currentUser = await this.findOne({
     _id: current_user,
   });
-  const accountUsingUsername = await this.findOne({
-    username,
-  });
 
-  const accountUsingEmail = await this.findOne({
-    email,
-  });
+  if (username && username !== targetedUser.username) {
+    const accountUsingUsername = await this.findOne({
+      username,
+    });
+
+    if (accountUsingUsername) {
+      throw new BadRequestError(
+        "username has already been taken, please choose an other one"
+      );
+    }
+  }
+
+  if (email && email !== targetedUser.email) {
+    const accountUsingEmail = await this.findOne({
+      email,
+    });
+    if (accountUsingEmail) {
+      throw new BadRequestError("email is already registered");
+    }
+  }
 
   if (!currentUser) {
     throw new UnauthorizedError(
@@ -257,18 +270,8 @@ userSchema.statics.saveChange = async function (
     throw new BadRequestError(`User with id ${id} does not exist`);
   }
 
-  if (accountUsingUsername) {
-    throw new BadRequestError(
-      "username has already been taken, please choose an other one"
-    );
-  }
-
-  if (accountUsingEmail) {
-    throw new BadRequestError("email is already registered");
-  }
-
   if (
-    targetedUser._id !== currentUser._id &&
+    targetedUser.id !== currentUser.id &&
     currentUser.role !== roles.admin
   ) {
     throw new UnauthorizedError(
@@ -280,13 +283,25 @@ userSchema.statics.saveChange = async function (
     await targetedUser.passwordVerify(current_password);
   }
 
-  Object.assign(targetedUser, {
-    email,
-    password,
-    username,
-  });
+  if (username) {
+    Object.assign(targetedUser, {
+      username,
+      email,
+    });
+  }
 
-  await targetedUser.hashPassword();
+  if (email) {
+    Object.assign(targetedUser, {
+      email,
+    });
+  }
+
+  if (password && password_confirmation) {
+    Object.assign(targetedUser, {
+      password,
+    });
+    await targetedUser.hashPassword();
+  }
 
   const validate = targetedUser.validateSync();
   if (validate !== undefined) {
