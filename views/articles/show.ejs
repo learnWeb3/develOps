@@ -11,7 +11,7 @@
                 <h2 class="my-4">Let's test what you’ve just learnt !</h2>
 
                 <% article.quiz.forEach((quiz)=>{ %>
-                        <form action="/quiz/<%= quiz.id %>/validate" method="post">
+                        <form action="/quiz/<%= quiz.id %>/validate" method="post" class="form-quiz">
                                 <p class="my-4 fs-2">
                                         <%= quiz.title %>
                                 </p>

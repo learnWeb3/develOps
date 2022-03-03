@@ -1,7 +1,13 @@
 <p class="fs-5">
-    <span class="pe-3"><%= index+1 %>)</span> <%= question.content %>
+    <span class="pe-3">
+        <%= index+1 %>)
+    </span>
+    <%= question.content %>
 </p>
-<% question.answers.forEach((answer, answerIndex)=>{ %>
-    <%- include('./_answer.ejs', {answer, question, questionIndex: index, answerIndex}) %>
-<% }) %>
+<div class="question">
+    <% question.answers.forEach((answer, answerIndex)=>{ %>
+        <%- include('./_answer.ejs', {answer, question, questionIndex: index, answerIndex}) %>
+    <% }) %>
+</div>
+
 <hr>
