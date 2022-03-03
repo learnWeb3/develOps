@@ -92,12 +92,24 @@ userSchema.pre("find", function (next) {
   next();
 });
 
+
 userSchema.pre("findOne", function (next) {
   this.populate("articlesCount");
   next();
 });
 
 userSchema.pre("find", function (next) {
+  this.populate("answers");
+  next();
+});
+
+
+userSchema.pre("find", function (next) {
+  this.populate("answersCount");
+  next();
+});
+
+userSchema.pre("findOne", function (next) {
   this.populate("answers");
   next();
 });
@@ -110,20 +122,18 @@ userSchema.pre("findOne", function (next) {
 // AUTOREMOVE RELATED RECORDS (DATA INTEGRITY)
 userSchema.pre("deleteOne", {document: true, query: false},  async function (next) {
   console.log('running')
-  await Article.find({
+  const articles = await Article.find({
     user: this._id,
-  }).then(async (articles)=>{
-    for(const article of articles){
-      await article.deleteOne()
-    }
-  });
-  await UserAnswer.find({
-    user: this._id,
-  }).then(async (userAnswers)=>{
-    for(const userAnswer of userAnswers){
-      await userAnswer.deleteOne()
-    }
   })
+  for(const article of articles){
+    await article.deleteOne()
+  }
+  const userAnswers = await UserAnswer.find({
+    user: this._id,
+  })
+  for(const userAnswer of userAnswers){
+    await userAnswer.deleteOne()
+  }
   next()
 });
 
@@ -156,6 +166,7 @@ userSchema.virtual("answersCount", {
 });
 
 // INSTANCE METHODS
+
 userSchema.methods.hashPassword = async function () {
   const saltRounds = 10;
   const hash = await new Promise((resolve, reject) =>

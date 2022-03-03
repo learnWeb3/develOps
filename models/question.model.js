@@ -33,20 +33,20 @@ const questionSchema = new Schema(
 
 questionSchema.pre('deleteOne', {document: true, query: false}, async function(next){
   console.log('running')
-  await Answer.find({
+  const answers = await Answer.find({
     question: this._id
-  }).then(async (answers)=>{
-    for(const answer of answers){
-      await answer.deleteOne()
-    }
-  });
-  await UserAnswer.find({
+  })
+  for(const answer of answers){
+    //console.log(answer)
+    await answer.deleteOne()
+  }
+  const userAnswers = await UserAnswer.find({
     question: this._id
-  }).then(async (userAnswers)=>{
-    for(const userAnswer of userAnswers){
-      await userAnswer.deleteOne()
-    }
-  });
+  })
+  for(const userAnswer of userAnswers){
+    //console.log(userAnswer)
+    await userAnswer.deleteOne()
+  }
   next()
 })
 

@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
-import { BadRequestError, InternalServerError, UnauthorizedError } from "../base/errors/index.js";
+import {
+  BadRequestError,
+  InternalServerError,
+  UnauthorizedError,
+} from "../base/errors/index.js";
 import Question from "./question.model.js";
 import Answer from "./answer.model.js";
 import Article from "./article.model.js";
@@ -35,17 +39,28 @@ const quizSchema = new Schema(
 // HOOKS (DB MIDDLEWARE)
 
 // AUTOREMOVE
-quizSchema.pre("deleteOne", {document: true, query: false},  async function (next) {
-  console.log('running')
-  await Question.find({
-    quiz: this._id,
-  }).then(async (questions)=>{
-    for(const question of questions){
-      await question.deleteOne()
+quizSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    console.log("running");
+    const questions = await Question.find({
+      quiz: this._id,
+    });
+    for (const question of questions) {
+      //console.log(question)
+      await question.deleteOne();
     }
-  });
-  next();
-});
+    const userAnswers = await UserAnswer.find({
+      quiz: this._id,
+    });
+    for (const answer of userAnswers) {
+      //console.log(answer)
+      await answer.deleteOne();
+    }
+    next();
+  }
+);
 
 // AUTOPOPULATE
 quizSchema.pre("find", function (next) {
@@ -121,42 +136,45 @@ quizSchema.statics.registerAnswer = async function (
     _id: id,
   }).then((quiz) => quiz.questions);
 
-
   const userAnswers = [];
 
   try {
     for (let i = 0; i < quizQuestions.length; i++) {
       const availableAnswers = quizQuestions[i].answers;
       const validAnswer = availableAnswers.find((answer) => answer.isValid);
-      const userAnswerIsValid = validAnswer._id === question[i];
+      const userAnswerIsValid = validAnswer.id === question[i];
       const data = {
         user: current_user,
-        question: quizQuestions[i]._id,
+        question: quizQuestions[i].id,
         answer: question[i],
         isValid: userAnswerIsValid,
-      }
+        quiz: id,
+      };
       const userAnswer = await UserAnswer.register(data);
       userAnswers.push(userAnswer);
-      return ({
-        quiz: id,
-        userAnswers,
-      })
     }
   } catch (error) {
+    console.log(error);
     // delete registered answers
-    if(userAnswers.length){
+    if (userAnswers.length) {
       try {
-        for(const userAnswer of userAnswers){
+        for (const userAnswer of userAnswers) {
           await UserAnswer.deleteOne({
-            _id: userAnswer._id
-          })
+            _id: userAnswer._id,
+          });
         }
       } catch (error) {
-        throw new InternalServerError('An unexpected error occured, we are investigating the issue, please try again later.')
+        throw new InternalServerError(
+          "An unexpected error occured, we are investigating the issue, please try again later."
+        );
       }
     }
-    throw new InternalServerError('An unexpected error occured, we are investigating the issue, please try again later.')
+    throw new InternalServerError(
+      "An unexpected error occured, we are investigating the issue, please try again later."
+    );
   }
+
+  return userAnswers;
 };
 
 quizSchema.statics.register = async function (
@@ -259,7 +277,7 @@ quizSchema.statics.register = async function (
 
   return {
     quiz: newQuiz,
-    questions: quizQuestions
+    questions: quizQuestions,
   };
 };
 

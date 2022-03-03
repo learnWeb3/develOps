@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-import { BadRequestError } from "../base/errors/index.js";
+import { BadRequestError, NotFoundError } from "../base/errors/index.js";
 import Category from "./category.model.js";
 import User from "./user.model.js";
+import UserAnswer from "./user_answer.model.js";
 import { sliceStringAsPreview } from "../base/utils.js";
 import moment from "moment";
 import Quiz from "./quiz.model.js";
@@ -52,16 +53,21 @@ const articleSchema = new Schema(
 
 // AUTOREMOVE (CASCADE LIKE)
 
-articleSchema.pre("deleteOne", {document: true, query: false},  async function (next) {
-  console.log('running')
-  return Quiz.find({
-    article: this._id
-  }).then(async(quizs)=>{
-    for(const quiz of quizs){
-      return await quiz.deleteOne()
+articleSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    console.log("running");
+    const quizs = await Quiz.find({
+      article: this._id,
+    });
+    //console.log(quizs)
+    for (const quiz of quizs) {
+      return await quiz.deleteOne();
     }
-  }).then(()=> next())
-});
+    next()
+  }
+);
 
 // AUTOPOPULATE
 articleSchema.pre("findOne", function (next) {
@@ -92,16 +98,76 @@ articleSchema.virtual("quizCount", {
 });
 
 // CLASS METHODS
+
+articleSchema.statics.findOneWithUserResponse = async function (article, user) {
+  const userModel = await User.findOne({
+    _id: user,
+  });
+  if (!userModel) {
+    throw new NotFoundError(`User with id ${user} does not exists`);
+  }
+  const articleModel = await this.findOne({
+    _id: article,
+  });
+  if (!articleModel) {
+    throw new NotFoundError(
+      "Article does not exists or has been moved to an other location"
+    );
+  }
+
+  const data = {
+    id: articleModel.id,
+    user: articleModel.user,
+    category: articleModel.category,
+    title: articleModel.title,
+    preview: articleModel.preview,
+    imgPreview: articleModel.imgPreview,
+    content: articleModel.content,
+    quiz: [],
+  };
+
+  const quiz = articleModel.quiz;
+  const quizData = [];
+  for (const quizElement of quiz) {
+    const userAnswers = [];
+    const questions = quizElement.questions;
+    const questionData = [];
+    for (const question of questions) {
+      questionData.push({
+        content: question.content,
+        quiz: question.quiz,
+        answers: question.answers,
+      });
+      userAnswers.push(...await UserAnswer.find({
+        user,
+        question: question.id,
+      }).populate('question').populate('answer'))
+      console.log(userAnswers)
+    }
+    quizData.push({
+      id: quizElement.id,
+      title: quizElement.title,
+      article: quizElement.article,
+      userHasAnswered: userAnswers.length ? true: false,
+      questions: questionData,
+      userAnswers
+    });
+  }
+
+  data.quiz = quizData;
+
+  return data;
+};
 articleSchema.statics.findOneWithQuizz = async function (id) {
   const article = await this.findOne({
     _id: id,
   });
-  article.content = article.content;
   if (!article) {
     throw new NotFoundError(
       "Article does not exists or has been moved to an other location"
     );
   }
+
   return article;
 };
 

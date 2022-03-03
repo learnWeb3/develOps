@@ -14,10 +14,18 @@
                         <p class="my-4 fs-2">
                                 <%= quiz.title %>
                         </p>
-                        <% quiz.questions.forEach((question, index)=>{ %>
-                                <%- include('../quiz/_question.ejs', {question, index}) %>
-                         <% }) %>
-                        <button type="submit" class="btn btn-lg btn-success mb-3">Submit</button>
+                        <% if(quiz.userHasAnswered){ %>
+                                <% quiz.userAnswers.forEach((answer, index)=>{ %>
+                                        <%- include('../quiz/_user_answer.ejs', {answer, index}) %>
+                                <% }) %>
+                        <% }else{ %>
+                                <% quiz.questions.forEach((question, index)=>{ %>
+                                        <%- include('../quiz/_question.ejs', {question, index, quiz}) %>
+                                <% }) %>
+                        <% } %>
+                        <% if(!quiz.userHasAnswered){ %>
+                           <button type="submit" class="btn btn-lg btn-success mb-3">Submit</button>
+                        <% } %>
                 </form>
         <% }) %>
 

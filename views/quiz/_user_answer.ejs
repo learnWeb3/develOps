@@ -1,0 +1,31 @@
+
+<p class="fs-5">
+    <%= answer.question.content %>
+</p>
+<div class="form-check py-2 panel-radio shadow d-flex align-items-center my-4 <%= answer.isValid ? 'valid' : 'invalid' %>">
+    <p class="form-check-label px-2 text-white mb-0">
+        <%= answer.answer.content %>
+    </p>
+</div>
+
+<style>
+    input[type='radio']{
+       -webkit-appearance: none;
+       opacity: 0;
+       position: absolute;
+    }
+    .panel-radio{
+        height: 5rem;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        transition: all 150ms ease-in-out;
+    }
+
+    .panel-radio.valid{
+        background-color: #198754;
+    }
+
+    .panel-radio.invalid{
+        background-color: #dc3545;
+    }
+</style>

@@ -39,13 +39,14 @@ const answerSchema = new Schema(
 answerSchema.pre(
   "deleteOne", {document: true, query: false},
   async function (next) {
-    return UserAnswer.find({
+    const userAnswers = await UserAnswer.find({
       answer: this._id,
-    }).then(async (userAnswers)=>{
-      for(const userAnswer of userAnswers){
-        return await userAnswer.deleteOne()
-      }
-    }).then(()=>next())
+    });
+    //console.log(userAnswers)
+    for(const userAnswer of userAnswers){
+      return await userAnswer.deleteOne()
+    }
+    next()
   }
 );
 

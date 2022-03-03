@@ -52,11 +52,12 @@ articlesRouter.get("/articles/:id/edit", async (req, res, next) => {
 articlesRouter.get("/articles/:id", async (req, res, next) => {
   try {
     const {id} = req.params
-    const article = await Article.findOneWithQuizz(id)
+    const article = await Article.findOneWithUserResponse(id, req.session.currentUser);
     res.render("articles/show", {
-      article
+      article,
     });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });

@@ -29,17 +29,13 @@ categorySchema.pre(
   "deleteOne",
   { document: true, query: false },
   async function (next) {
-    return Article.find({
+    const articles = await Article.find({
       category: this._id,
     })
-      .then(
-        async (articles) =>{
-          for(const article of articles){
-            await article.deleteOne()
-          }
-        }
-      )
-      .then(() => next());
+    for(const article of articles){
+      await article.deleteOne()
+    }
+    next();
   }
 );
 
