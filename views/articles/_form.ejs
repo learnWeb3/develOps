@@ -14,14 +14,14 @@
         </div>
         <div class="col-12 col-md-6 d-flex align-items-center justify-content-start justify-content-md-end">
             <div class="row col-12 col-md-8 mt-4 mt-md-0">
-                <div class="col-6">
+                <div class="col-<%= type === "update" ? '6' : '6 offset-md-6' %>">
                     <a href="/categories/new" class="btn btn-md btn-secondary text-decoration-none col-12">Category</a>
                 </div>
+                <% if (type === "update"){ %> 
                 <div class="col-6">
-                    <% if (type === "update"){ %> 
                         <a href="/articles/<%= id %>/delete" class="btn btn-md btn-danger col-12">Supprimer</a>
-                    <% } %>
                 </div>
+                <% } %>
             </div>
         </div>
     </div>
