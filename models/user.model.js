@@ -7,9 +7,9 @@ import {
 } from "../base/errors/index.js";
 import bcrypt from "bcrypt";
 import Article from "./article.model.js";
-import Quiz from "./quiz.model.js"
+import Quiz from "./quiz.model.js";
 import UserAnswer from "./user_answer.model.js";
-import moment from 'moment';
+import moment from "moment";
 
 const { Schema, model } = mongoose;
 const {
@@ -211,6 +211,7 @@ userSchema.statics.saveChange = async function (
     username: null,
     current_password: null,
     current_user: null,
+    role: roles.user,
   }
 ) {
   const {
@@ -220,14 +221,17 @@ userSchema.statics.saveChange = async function (
     password_confirmation,
     current_password,
     current_user,
+    role,
   } = data;
 
   if (!id) {
     throw new BadRequestError(`Missing user id`);
   }
 
-  if(!email || !current_password){
-    throw new BadRequestError(`Missing required parameter among: email, current_password`);
+  if (!email || !current_password) {
+    throw new BadRequestError(
+      `Missing required parameter among: email, current_password`
+    );
   }
 
   if (password && password_confirmation && password !== password_confirmation) {
@@ -272,10 +276,7 @@ userSchema.statics.saveChange = async function (
     throw new BadRequestError(`User with id ${id} does not exist`);
   }
 
-  if (
-    targetedUser.id !== currentUser.id &&
-    currentUser.role !== roles.admin
-  ) {
+  if (targetedUser.id !== currentUser.id && currentUser.role !== roles.admin) {
     throw new UnauthorizedError(
       "You do not have the rights to perform this action"
     );
@@ -295,6 +296,20 @@ userSchema.statics.saveChange = async function (
   if (email) {
     Object.assign(targetedUser, {
       email,
+    });
+  }
+
+  if (role) {
+    if(currentUser.role !== roles.admin){
+      throw new UnauthorizedError(
+        "You do not have the rights to perform this action"
+      );
+    }
+    if (!Object.values(roles).includes(parseInt(role))) {
+      throw new BadRequestError(`role does not exists`);
+    }
+    Object.assign(targetedUser, {
+      role: parseInt(role),
     });
   }
 
@@ -321,7 +336,7 @@ userSchema.statics.register = async function (
     password: null,
     email: null,
     password_confirmation: null,
-    role: roles.user
+    role: roles.user,
   }
 ) {
   const { username, password, email, password_confirmation, role } = data;
@@ -340,10 +355,8 @@ userSchema.statics.register = async function (
     );
   }
 
-  if(password !== password_confirmation){
-    throw new BadRequestError(
-      "Passwords do not match ! Please check again"
-    );
+  if (password !== password_confirmation) {
+    throw new BadRequestError("Passwords do not match ! Please check again");
   }
 
   if (accountUsingUsername) {
@@ -363,10 +376,10 @@ userSchema.statics.register = async function (
     password_confirmation,
   });
 
-  if(role){
+  if (role) {
     Object.assign(newUser, {
-      role
-    })
+      role,
+    });
   }
 
   const validate = newUser.validateSync();
@@ -396,42 +409,59 @@ userSchema.statics.login = async function (data = { email, password }) {
   return potentialUser;
 };
 
+userSchema.statics.getExistingRoles = function () {
+  const rolesKeys = Object.keys(roles);
+  return rolesKeys.map((key, index) => ({
+    label: key,
+    id: roles[key],
+  }));
+};
 
-userSchema.statics.getAdminData = async function(){
-  const users = await this.find({}).then((users)=>users.map((user)=>({
-    id: user.id,
-    email: user.email,
-    username: user.username,
-    role: roles.admin === user.role ? 'admin' : 'user',
-    createdAt: moment( user.createdAt).format('MMM Do YY'),
-    updatedAt: moment( user.updatedAt).format('MMM Do YY'),
-  })));
+userSchema.statics.getAdminData = async function () {
+  const users = await this.find({}).then((users) =>
+    users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: roles.admin === user.role ? "admin" : "user",
+      createdAt: moment(user.createdAt).format("MMM Do YY"),
+      updatedAt: moment(user.updatedAt).format("MMM Do YY"),
+    }))
+  );
 
-  const articles = await Article.find({}).populate('category').then((articles)=>articles.map((article)=>({
-    id: article.id,
-    title: article.title,
-    category: {
-      label: article.category.label,
-      id: article.category.id
-    },
-    createdAt: moment( article.createdAt).format('MMM Do YY'),
-    updatedAt: moment( article.updatedAt).format('MMM Do YY'),
-  })))
-  const quiz = await Quiz.find({}).populate('article').then((quizs)=>quizs.map((quiz)=>({
-    title: quiz.title,
-    article: {
-      title: quiz.article.title,
-      id: quiz.article.id
-    },
-    createdAt: moment( quiz.createdAt).format('MMM Do YY'),
-    updatedAt: moment( quiz.updatedAt).format('MMM Do YY'),
-  })));
+  const articles = await Article.find({})
+    .populate("category")
+    .then((articles) =>
+      articles.map((article) => ({
+        id: article.id,
+        title: article.title,
+        category: {
+          label: article.category.label,
+          id: article.category.id,
+        },
+        createdAt: moment(article.createdAt).format("MMM Do YY"),
+        updatedAt: moment(article.updatedAt).format("MMM Do YY"),
+      }))
+    );
+  const quiz = await Quiz.find({})
+    .populate("article")
+    .then((quizs) =>
+      quizs.map((quiz) => ({
+        title: quiz.title,
+        article: {
+          title: quiz.article.title,
+          id: quiz.article.id,
+        },
+        createdAt: moment(quiz.createdAt).format("MMM Do YY"),
+        updatedAt: moment(quiz.updatedAt).format("MMM Do YY"),
+      }))
+    );
 
-  return ({
+  return {
     users,
     quiz,
-    articles
-  })
-}
+    articles,
+  };
+};
 
 export default model("User", userSchema);

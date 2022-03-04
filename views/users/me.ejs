@@ -3,14 +3,14 @@
         <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
             <h1 class="col-12 col-lg-8 offset-lg-col-2 my-4 fs-2"> <%= user.id === currentUser ? 'My Account' : `${user.username}' Profile` %></h1>
             <form id="me" action="/users/<%= user.id %>" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
-                <% if(user.id === currentUser){ %>
+                <% if(user.id === currentUser || isAdmin){ %>
                     <div class="mb-3">
                         <label class="form-label" for="">Email address *</label>
                         <input type="text" name="email" class="form-control mb-1" value="<%= user.email %>">
                         <span data-for="email" class="errors text-danger py-2"></span>
                     </div>
                 <% } %>
-                <% if(user.id === currentUser){ %>
+                <% if(user.id === currentUser || isAdmin){ %>
                     <div class="mb-3">
                         <label class="form-label" for="">Current password *</label>
                         <input type="password" name="current_password" class="form-control mb-1">
@@ -19,7 +19,7 @@
                 <% } %>
                     <div class="mb-3">
                         <label class="form-label" for="">Username</label>
-                        <% if(user.id === currentUser){ %>
+                        <% if(user.id === currentUser || isAdmin){ %>
                             <input type="text" name="username" class="form-control mb-1"
                                 value="<%= user.username %>">
                             <span data-for="username" class="errors text-danger py-2"></span>
@@ -29,7 +29,7 @@
                             </p>
                         <% } %>
                     </div>
-                    <% if(user.id === currentUser){ %>
+                    <% if(user.id === currentUser || isAdmin){ %>
                             <div class="mb-3">
                                 <label class="form-label" for="">Password</label>
                                 <input type="password" name="password" class="form-control mb-1">
@@ -40,6 +40,16 @@
                                 <input type="password" name="password_confirmation" class="form-control mb-1">
                                 <span data-for="password_confirmation" class="errors text-danger py-2"></span>
                             </div>
+                            <% if(isAdmin) { %>
+                                <div class="mb-3">
+                                    <label class="form-label" for="role">Choose the user role</label>
+                                    <select name="role" id="role" class="form-control">
+                                        <% roles.forEach((role)=>{ %>
+                                            <option value="<%= role.id %>"><%= role.label %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            <% } %>
                             <button type="submit" class="btn btn-md btn-success col-12 disabled">
                                 Submit
                             </button>

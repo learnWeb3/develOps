@@ -40,6 +40,7 @@ usersRouter.post("/users/:id", async (req, res, next) => {
       username,
       password_confirmation,
       current_password,
+      role
     } = req.body;
     const user = await User.saveChange(id, {
       email,
@@ -48,6 +49,7 @@ usersRouter.post("/users/:id", async (req, res, next) => {
       username,
       current_password,
       current_user: req.session.currentUser,
+      role
     });
     req.session.flash = {
       message: "Account updated with success",
@@ -113,8 +115,10 @@ usersRouter.get("/users/:id", async (req, res, next) => {
     const user = await User.findOne({
       _id: id,
     });
+    const roles = User.getExistingRoles()
     res.render("users/me", {
       user,
+      roles,
     });
   } catch (error) {
     next(error);

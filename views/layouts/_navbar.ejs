@@ -10,6 +10,9 @@
                 <% if (isLoggedIn){ %>
                     <% if(isAdmin){ %>
                         <li class="nav-item me-4">
+                            <a class="nav-link active" href="/admin/dashboard">Admin Panel</a>
+                        </li>
+                        <li class="nav-item me-4">
                             <a class="nav-link active" href="/articles/new">Publish</a>
                         </li>
                     <% } %>
