@@ -68,7 +68,7 @@ mongoose
     app.use(isLoggedIn);
     // verify if a user has admin rights and set isAdmin property on res.locals
     app.use(isAdmin);
-    // verify user rights to access ressources
+    // verify user rights to access ressources unless url match specified path
     app.use(
       authGuard([
         { path: "/login", method: "GET" },
@@ -79,6 +79,7 @@ mongoose
       ])
     );
 
+    // verify user rights for specific ressources matching a regex pattern
     app.use(
       adminGuard([
         { match: "/articles/new", method: "GET" },
@@ -87,11 +88,13 @@ mongoose
         { match: "/articles/?.+/delete", method: "GET" },
         { match: "/articles", method: "POST" },
         { match: "/categories/new", method: "GET" },
+        { match: "/categories/?.+/delete", method: 'GET' },
         { match: "/categories/?.+/edit", method: "GET" },
         { match: "/categories", method: "POST" },
         { match: "/quiz/new", method: "GET" },
         { match: "/quiz/?.+/edit", method: "GET" },
-        { match: "/quiz", method: "POST" }
+        { match: "/quiz", method: "POST" },
+        { match: "/admin/dashboard", method: "GET" }
       ])
     );
 
