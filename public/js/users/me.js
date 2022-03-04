@@ -118,169 +118,8 @@ import {
     };
 
     // listnen inputs events
-    usernameInput.addEventListener("input", (event) => {
-      const checkUsername = validateUsername(
-        usernameInput,
-        usernameErrorsSpan,
-        usernameInput.value
-      );
-      const checkEmail = validateEmail(
-        emailInput,
-        emailErrorsSpan,
-        emailInput.value
-      );
-      const checkPassword = validatePassword(
-        passwordInput,
-        passwordErrorsSpan,
-        passwordInput.value
-      );
-      const checkPasswordConfirmation = validatePasswordConfirmation(
-        passwordConfirmationInput,
-        passwordConfirmationErrorsSpan,
-        passwordConfirmationInput.value
-      );
-
-      const checkCurrentPassword = validateCurrentPassword(
-        currentPasswordInput,
-        currentPasswordErrorsSpan,
-        currentPasswordInput.value
-      );
-
-      if (
-        checkUsername &&
-        checkEmail &&
-        checkPassword &&
-        checkPasswordConfirmation &&
-        checkCurrentPassword
-      ) {
-        submitButton.classList.remove("disabled");
-      } else {
-        submitButton.classList.add("disabled");
-      }
-    });
-
-    emailInput.addEventListener("input", (event) => {
-      const checkUsername = validateUsername(
-        usernameInput,
-        usernameErrorsSpan,
-        usernameInput.value
-      );
-      const checkEmail = validateEmail(
-        emailInput,
-        emailErrorsSpan,
-        emailInput.value
-      );
-      const checkPassword = validatePassword(
-        passwordInput,
-        passwordErrorsSpan,
-        passwordInput.value
-      );
-      const checkPasswordConfirmation = validatePasswordConfirmation(
-        passwordConfirmationInput,
-        passwordConfirmationErrorsSpan,
-        passwordConfirmationInput.value
-      );
-      const checkCurrentPassword = validateCurrentPassword(
-        currentPasswordInput,
-        currentPasswordErrorsSpan,
-        currentPasswordInput.value
-      );
-
-      if (
-        checkUsername &&
-        checkEmail &&
-        checkPassword &&
-        checkPasswordConfirmation &&
-        checkCurrentPassword
-      ) {
-        submitButton.classList.remove("disabled");
-      } else {
-        submitButton.classList.add("disabled");
-      }
-    });
-
-    passwordInput.addEventListener("input", (event) => {
-      const checkUsername = validateUsername(
-        usernameInput,
-        usernameErrorsSpan,
-        usernameInput.value
-      );
-      const checkEmail = validateEmail(
-        emailInput,
-        emailErrorsSpan,
-        emailInput.value
-      );
-      const checkPassword = validatePassword(
-        passwordInput,
-        passwordErrorsSpan,
-        passwordInput.value
-      );
-      const checkPasswordConfirmation = validatePasswordConfirmation(
-        passwordConfirmationInput,
-        passwordConfirmationErrorsSpan,
-        passwordConfirmationInput.value
-      );
-
-      const checkCurrentPassword = validateCurrentPassword(
-        currentPasswordInput,
-        currentPasswordErrorsSpan,
-        currentPasswordInput.value
-      );
-
-      if (
-        checkUsername &&
-        checkEmail &&
-        checkPassword &&
-        checkPasswordConfirmation &&
-        checkCurrentPassword
-      ) {
-        submitButton.classList.remove("disabled");
-      } else {
-        submitButton.classList.add("disabled");
-      }
-    });
-
-    passwordConfirmationInput.addEventListener("input", (event) => {
-      const checkUsername = validateUsername(
-        usernameInput,
-        usernameErrorsSpan,
-        usernameInput.value
-      );
-      const checkEmail = validateEmail(
-        emailInput,
-        emailErrorsSpan,
-        emailInput.value
-      );
-      const checkPassword = validatePassword(
-        passwordInput,
-        passwordErrorsSpan,
-        passwordInput.value
-      );
-      const checkPasswordConfirmation = validatePasswordConfirmation(
-        passwordConfirmationInput,
-        passwordConfirmationErrorsSpan,
-        passwordConfirmationInput.value
-      );
-
-      const checkCurrentPassword = validateCurrentPassword(
-        currentPasswordInput,
-        currentPasswordErrorsSpan,
-        currentPasswordInput.value
-      );
-      if (
-        checkUsername &&
-        checkEmail &&
-        checkPassword &&
-        checkPasswordConfirmation &&
-        checkCurrentPassword
-      ) {
-        submitButton.classList.remove("disabled");
-      } else {
-        submitButton.classList.add("disabled");
-      }
-    });
-
-    currentPasswordInput.addEventListener("input", (event) => {
+    usernameInput &&
+      usernameInput.addEventListener("input", (event) => {
         const checkUsername = validateUsername(
           usernameInput,
           usernameErrorsSpan,
@@ -301,7 +140,173 @@ import {
           passwordConfirmationErrorsSpan,
           passwordConfirmationInput.value
         );
-  
+
+        const checkCurrentPassword = validateCurrentPassword(
+          currentPasswordInput,
+          currentPasswordErrorsSpan,
+          currentPasswordInput.value
+        );
+
+        if (
+          checkUsername &&
+          checkEmail &&
+          checkPassword &&
+          checkPasswordConfirmation &&
+          checkCurrentPassword
+        ) {
+          submitButton.classList.remove("disabled");
+        } else {
+          submitButton.classList.add("disabled");
+        }
+      });
+
+    emailInput &&
+      emailInput.addEventListener("input", (event) => {
+        const checkUsername = validateUsername(
+          usernameInput,
+          usernameErrorsSpan,
+          usernameInput.value
+        );
+        const checkEmail = validateEmail(
+          emailInput,
+          emailErrorsSpan,
+          emailInput.value
+        );
+        const checkPassword = validatePassword(
+          passwordInput,
+          passwordErrorsSpan,
+          passwordInput.value
+        );
+        const checkPasswordConfirmation = validatePasswordConfirmation(
+          passwordConfirmationInput,
+          passwordConfirmationErrorsSpan,
+          passwordConfirmationInput.value
+        );
+        const checkCurrentPassword = validateCurrentPassword(
+          currentPasswordInput,
+          currentPasswordErrorsSpan,
+          currentPasswordInput.value
+        );
+
+        if (
+          checkUsername &&
+          checkEmail &&
+          checkPassword &&
+          checkPasswordConfirmation &&
+          checkCurrentPassword
+        ) {
+          submitButton.classList.remove("disabled");
+        } else {
+          submitButton.classList.add("disabled");
+        }
+      });
+
+    passwordInput &&
+      passwordInput.addEventListener("input", (event) => {
+        const checkUsername = validateUsername(
+          usernameInput,
+          usernameErrorsSpan,
+          usernameInput.value
+        );
+        const checkEmail = validateEmail(
+          emailInput,
+          emailErrorsSpan,
+          emailInput.value
+        );
+        const checkPassword = validatePassword(
+          passwordInput,
+          passwordErrorsSpan,
+          passwordInput.value
+        );
+        const checkPasswordConfirmation = validatePasswordConfirmation(
+          passwordConfirmationInput,
+          passwordConfirmationErrorsSpan,
+          passwordConfirmationInput.value
+        );
+
+        const checkCurrentPassword = validateCurrentPassword(
+          currentPasswordInput,
+          currentPasswordErrorsSpan,
+          currentPasswordInput.value
+        );
+
+        if (
+          checkUsername &&
+          checkEmail &&
+          checkPassword &&
+          checkPasswordConfirmation &&
+          checkCurrentPassword
+        ) {
+          submitButton.classList.remove("disabled");
+        } else {
+          submitButton.classList.add("disabled");
+        }
+      });
+
+    passwordConfirmationInput &&
+      passwordConfirmationInput.addEventListener("input", (event) => {
+        const checkUsername = validateUsername(
+          usernameInput,
+          usernameErrorsSpan,
+          usernameInput.value
+        );
+        const checkEmail = validateEmail(
+          emailInput,
+          emailErrorsSpan,
+          emailInput.value
+        );
+        const checkPassword = validatePassword(
+          passwordInput,
+          passwordErrorsSpan,
+          passwordInput.value
+        );
+        const checkPasswordConfirmation = validatePasswordConfirmation(
+          passwordConfirmationInput,
+          passwordConfirmationErrorsSpan,
+          passwordConfirmationInput.value
+        );
+
+        const checkCurrentPassword = validateCurrentPassword(
+          currentPasswordInput,
+          currentPasswordErrorsSpan,
+          currentPasswordInput.value
+        );
+        if (
+          checkUsername &&
+          checkEmail &&
+          checkPassword &&
+          checkPasswordConfirmation &&
+          checkCurrentPassword
+        ) {
+          submitButton.classList.remove("disabled");
+        } else {
+          submitButton.classList.add("disabled");
+        }
+      });
+
+    currentPasswordInput &&
+      currentPasswordInput.addEventListener("input", (event) => {
+        const checkUsername = validateUsername(
+          usernameInput,
+          usernameErrorsSpan,
+          usernameInput.value
+        );
+        const checkEmail = validateEmail(
+          emailInput,
+          emailErrorsSpan,
+          emailInput.value
+        );
+        const checkPassword = validatePassword(
+          passwordInput,
+          passwordErrorsSpan,
+          passwordInput.value
+        );
+        const checkPasswordConfirmation = validatePasswordConfirmation(
+          passwordConfirmationInput,
+          passwordConfirmationErrorsSpan,
+          passwordConfirmationInput.value
+        );
+
         const checkCurrentPassword = validateCurrentPassword(
           currentPasswordInput,
           currentPasswordErrorsSpan,
@@ -321,32 +326,32 @@ import {
       });
 
     // onload
-    const checkUsername = validateUsername(
-      usernameInput,
-      usernameErrorsSpan,
-      usernameInput.value
-    );
-    const checkEmail = validateEmail(
-      emailInput,
-      emailErrorsSpan,
-      emailInput.value
-    );
-    const checkPassword = validatePassword(
-      passwordInput,
-      passwordErrorsSpan,
-      passwordInput.value
-    );
-    const checkPasswordConfirmation = validatePasswordConfirmation(
-      passwordConfirmationInput,
-      passwordConfirmationErrorsSpan,
-      passwordConfirmationInput.value
-    );
+    const checkUsername = usernameInput
+      ? validateUsername(usernameInput, usernameErrorsSpan, usernameInput.value)
+      : false;
+    const checkEmail = emailInput
+      ? validateEmail(emailInput, emailErrorsSpan, emailInput.value)
+      : false;
 
-    const checkCurrentPassword = validateCurrentPassword(
-      currentPasswordInput,
-      currentPasswordErrorsSpan,
-      currentPasswordInput.value
-    );
+    const checkPassword = passwordInput
+      ? validatePassword(passwordInput, passwordErrorsSpan, passwordInput.value)
+      : false;
+
+    const checkPasswordConfirmation = passwordConfirmationInput
+      ? validatePasswordConfirmation(
+          passwordConfirmationInput,
+          passwordConfirmationErrorsSpan,
+          passwordConfirmationInput.value
+        )
+      : false;
+
+    const checkCurrentPassword = currentPasswordInput
+      ? validateCurrentPassword(
+          currentPasswordInput,
+          currentPasswordErrorsSpan,
+          currentPasswordInput.value
+        )
+      : false;
 
     if (
       checkUsername &&
@@ -355,9 +360,9 @@ import {
       checkPasswordConfirmation &&
       checkCurrentPassword
     ) {
-      submitButton.classList.remove("disabled");
+      submitButton && submitButton.classList.remove("disabled");
     } else {
-      submitButton.classList.add("disabled");
+      submitButton && submitButton.classList.add("disabled");
     }
   });
 })();

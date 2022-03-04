@@ -1,14 +1,16 @@
 import express from "express";
-import { NotFoundError } from "../base/errors/index.js";
 const { Router } = express;
 const staticRouter = Router();
-import Article from '../models/article.model.js'
+import Article from '../models/article.model.js';
+import Category from '../models/category.model.js'
 
 staticRouter.get("/", async (req, res, next) => {
   try {
     const articles = await Article.findLast(4)
+    const categories = await Category.find({})
     res.render("static/home", {
-      articles
+      articles,
+      categories
     });
     
   } catch (error) {

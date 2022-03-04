@@ -5,9 +5,20 @@
     <%= question.content %>
 </p>
 <div class="question">
+
+    <% if (quiz.userHasAnswered){ %>
+        <p class="fs-5 text-muted">This were the available choices : </p>
+    <% } %>
     <% question.answers.forEach((answer, answerIndex)=>{ %>
         <%- include('./_answer.ejs', {answer, question, questionIndex: index, answerIndex}) %>
     <% }) %>
+
+    <% if(quiz.userHasAnswered){ %>
+        <p class="fs-5 text-muted">This is your registered answer : </p>
+        <% userAnswers.filter((userAnswer)=>userAnswer.question.id === question.id).forEach((answer)=>{ %>
+            <%- include('./_user_answer.ejs', {answer, index}) %>
+        <% }) %>
+    <% } %>
 </div>
 
 <hr>

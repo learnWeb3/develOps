@@ -11,9 +11,15 @@
                <%- include('../articles/_card.ejs', {article}) %>
             </div>
             <% }) %>
+            <% if(!articles.length){ %>
+                <%- include('../layouts/empty.ejs') %>
+            <% } %>
         </div>
+        <%- include('../layouts/_pagination.ejs', {pageNumber, offset, limit, category}) %>
+        
     </div>
     <div class="col-3 d-none d-md-flex"></div>
 </div>
+
 
 <script src="/js/static/home.js"></script>

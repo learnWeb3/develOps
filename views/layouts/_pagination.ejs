@@ -1,0 +1,90 @@
+<% if(category && !search){ %>
+<nav class="mt-4" aria-label="pagination">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" href="articles?offset=<%= offset - limit > 0 ? offset - limit : 0 %>&limit<%= limit %>&category=<%=category%>"
+                aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <% for(let page=0; page<pageNumber; page++){ %>
+            <li class="page-item">
+                <a class="page-link" href="/articles?offset=<%= page * limit  %>&limit=<%= limit %>&category=<%=category%>"><%= page + 1 %></a>
+            </li>
+        <% } %>
+            <li class="page-item">
+                <a class="page-link" href="articles?offset=<%= offset+limit %>&limit=<%= limit %>&category=<%=category%>"
+                    aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+    </ul>
+</nav>
+<% } else if(category && search){ %>
+    <nav class="mt-4" aria-label="pagination">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="articles?offset=<%= offset - limit > 0 ? offset - limit : 0 %>&limit<%= limit %>&category=<%=category%>&search=<%=search%>"
+                    aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <% for(let page=0; page<pageNumber; page++){ %>
+                <li class="page-item">
+                    <a class="page-link" href="/articles?offset=<%= page * limit  %>&limit=<%= limit %>&category=<%=category%>&search=<%=search%>"><%= page + 1 %></a>
+                </li>
+            <% } %>
+                <li class="page-item">
+                    <a class="page-link" href="articles?offset=<%= offset+limit %>&limit=<%= limit %>&category=<%=category%>&search=<%=search%>"
+                        aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+        </ul>
+    </nav>
+<% } else if(search && !category){ %>
+    <nav class="mt-4" aria-label="pagination">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="articles?offset=<%= offset - limit > 0 ? offset - limit : 0 %>&limit<%= limit %>&search=<%=search%>"
+                    aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <% for(let page=0; page<pageNumber; page++){ %>
+                <li class="page-item">
+                    <a class="page-link" href="/articles?offset=<%= page * limit  %>&limit=<%= limit %>&search=<%=search%>"><%= page + 1 %></a>
+                </li>
+            <% } %>
+                <li class="page-item">
+                    <a class="page-link" href="articles?offset=<%= offset+limit %>&limit=<%= limit %>&search=<%=search%>"
+                        aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+        </ul>
+    </nav>
+<% } else { %>
+    <nav class="mt-4" aria-label="pagination">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="articles?offset=<%= offset - limit > 0 ? offset - limit : 0 %>&limit<%= limit %>"
+                    aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <% for(let page=0; page<pageNumber; page++){ %>
+                <li class="page-item">
+                    <a class="page-link" href="/articles?offset=<%= page * limit  %>&limit=<%= limit %>"><%= page + 1 %></a>
+                </li>
+            <% } %>
+                <li class="page-item">
+                    <a class="page-link" href="articles?offset=<%= offset+limit %>&limit=<%= limit %>"
+                        aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+        </ul>
+    </nav>
+
+<% } %>

@@ -65,7 +65,7 @@ articleSchema.pre(
     for (const quiz of quizs) {
       return await quiz.deleteOne();
     }
-    next()
+    next();
   }
 );
 
@@ -134,23 +134,28 @@ articleSchema.statics.findOneWithUserResponse = async function (article, user) {
     const questionData = [];
     for (const question of questions) {
       questionData.push({
+        id: question.id,
         content: question.content,
         quiz: question.quiz,
         answers: question.answers,
       });
-      userAnswers.push(...await UserAnswer.find({
-        user,
-        question: question.id,
-      }).populate('question').populate('answer'))
-      console.log(userAnswers)
+      userAnswers.push(
+        ...(await UserAnswer.find({
+          user,
+          question: question.id,
+        })
+          .populate("question")
+          .populate("answer"))
+      );
+      console.log(userAnswers);
     }
     quizData.push({
       id: quizElement.id,
       title: quizElement.title,
       article: quizElement.article,
-      userHasAnswered: userAnswers.length ? true: false,
+      userHasAnswered: userAnswers.length ? true : false,
       questions: questionData,
-      userAnswers
+      userAnswers,
     });
   }
 
@@ -228,6 +233,50 @@ articleSchema.statics.findLast = async function (number) {
   return await this.find({}, null, { sort: { createdAt: -1 } })
     .limit(number)
     .then((articles) => articles.map((article) => article.formatOneData()));
+};
+
+articleSchema.statics.getCount = async function () {
+  return await this.countDocuments();
+};
+
+articleSchema.statics.search = async function (
+  search = null,
+  category = null,
+  limit = 10,
+  offset = 0
+) {
+  let count = 0;
+  let articles = [];
+  if (search) {
+    const query = new RegExp(search, "i");
+    count =  await this.countDocuments({
+      $or: [{ title: query }, { content: query }, { preview: query }],
+    });
+    articles = await this.find({
+      $or: [{ title: query }, { content: query }, { preview: query }],
+    })
+      .skip(offset)
+      .limit(limit);
+  } else if (category) {
+    count = await this.countDocuments({
+      category,
+    })
+    articles = await this.find({
+      category,
+    })
+      .skip(offset)
+      .limit(limit);
+  } else {
+    count = await this.countDocuments({})
+    articles = await this.find({}, null, { sort: { createdAt: -1 } })
+      .skip(offset)
+      .limit(limit);
+  }
+
+  return {
+    pageNumber: Math.ceil(count / limit),
+    articles: articles.map((article) => article.formatOneData()),
+  };
 };
 
 articleSchema.statics.register = async function (

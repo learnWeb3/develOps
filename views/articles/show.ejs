@@ -12,12 +12,14 @@
         <% article.quiz.forEach((quiz)=>{ %>
                 <form action="/quiz/<%= quiz.id %>/validate" method="post" class="form-quiz">
                         <p class="my-4 fs-2">
-                                <%= quiz.title %>
+                           <%= quiz.title %>
                         </p>
                         <% if(quiz.userHasAnswered){ %>
-                                <% quiz.userAnswers.forEach((answer, index)=>{ %>
-                                        <%- include('../quiz/_user_answer.ejs', {answer, index}) %>
+
+                                <% quiz.questions.forEach((question, index)=>{ %>
+                                        <%- include('../quiz/_question.ejs', {question, index, quiz, userAnswers: quiz.userAnswers}) %>
                                 <% }) %>
+                               
                         <% }else{ %>
                                 <% quiz.questions.forEach((question, index)=>{ %>
                                         <%- include('../quiz/_question.ejs', {question, index, quiz}) %>
@@ -31,21 +33,20 @@
 
 
         <% if(isAdmin){%>
-        <hr>
 
-        <p class="fs-4 my-4">Administration zone</p>
+                <p class="fs-4 my-4">Administration zone</p>
 
-        <div class="row mb-4">
-                <div class="col-12 col-lg-4 d-flex align-items-center justify-content-start">
-                        <a href="/articles/<%= article.id %>/edit" class="btn-lg btn-primary text-decoration-none text-center w-100">UPDATE</a>
+                <div class="row mb-4">
+                        <div class="col-12 col-lg-4 d-flex align-items-center justify-content-start">
+                                <a href="/articles/<%= article.id %>/edit" class="btn-lg btn-primary text-decoration-none text-center w-100">EDIT</a>
+                        </div>
+                        <div class="col-12 col-lg-4 d-flex align-items-center justify-content-center">
+                                <a href="/quiz/new" class="btn-lg btn-secondary text-decoration-none text-center w-100">NEW QUIZ</a>
+                        </div>
+                        <div class="col-12 col-lg-4 d-flex align-items-center justify-content-end">
+                                <a href="/articles/<%= article.id %>/delete" class="btn-lg btn-danger text-decoration-none text-center w-100">DELETE</a>
+                        </div>
                 </div>
-                <div class="col-12 col-lg-4 d-flex align-items-center justify-content-center">
-                        <a href="/quiz/new" class="btn-lg btn-secondary text-decoration-none text-center w-100">NEW QUIZ</a>
-                </div>
-                <div class="col-12 col-lg-4 d-flex align-items-center justify-content-end">
-                        <a href="/articles/<%= article.id %>/delete" class="btn-lg btn-danger text-decoration-none text-center w-100">DELETE</a>
-                </div>
-        </div>
 
         <% } %>
      

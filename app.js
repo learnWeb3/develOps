@@ -86,6 +86,12 @@ mongoose
         { match: "/articles/?.+/edit", method: "GET" },
         { match: "/articles/?.+/delete", method: "GET" },
         { match: "/articles", method: "POST" },
+        { match: "/categories/new", method: "GET" },
+        { match: "/categories/?.+/edit", method: "GET" },
+        { match: "/categories", method: "POST" },
+        { match: "/quiz/new", method: "GET" },
+        { match: "/quiz/?.+/edit", method: "GET" },
+        { match: "/quiz", method: "POST" }
       ])
     );
 

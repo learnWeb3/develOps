@@ -1,36 +1,49 @@
 <div class="container">
     <div class="row min-vh-80">
         <div class="col-12 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-            <h1 class="col-12 col-lg-8 offset-lg-col-2 my-4 fs-2">My Account</h1>
+            <h1 class="col-12 col-lg-8 offset-lg-col-2 my-4 fs-2"> <%= user.id === currentUser ? 'My Account' : `${user.username}' Profile` %></h1>
             <form id="me" action="/users/<%= user.id %>" method="POST" class="col-12 col-lg-8 offset-lg-col-2">
-                <div class="mb-3">
-                    <label class="form-label" for="">Email address *</label>
-                    <input type="text" name="email" class="form-control mb-1" value="<%= user.email %>">
-                    <span data-for="email" class="errors text-danger py-2"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="">Current password *</label>
-                    <input type="password" name="current_password" class="form-control mb-1">
-                    <span data-for="current_password" class="errors text-danger py-2"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="">Username</label>
-                    <input type="text" name="username" class="form-control mb-1" value="<%= user.username %>">
-                    <span data-for="username" class="errors text-danger py-2"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="">Password</label>
-                    <input type="password" name="password" class="form-control mb-1">
-                    <span data-for="password" class="errors text-danger py-2"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="">Password Confirmation</label>
-                    <input type="password" name="password_confirmation" class="form-control mb-1">
-                    <span data-for="password_confirmation" class="errors text-danger py-2"></span>
-                </div>
-                <button type="submit" class="btn btn-md btn-success col-12 disabled">
-                    Submit
-                </button>
+                <% if(user.id === currentUser){ %>
+                    <div class="mb-3">
+                        <label class="form-label" for="">Email address *</label>
+                        <input type="text" name="email" class="form-control mb-1" value="<%= user.email %>">
+                        <span data-for="email" class="errors text-danger py-2"></span>
+                    </div>
+                <% } %>
+                <% if(user.id === currentUser){ %>
+                    <div class="mb-3">
+                        <label class="form-label" for="">Current password *</label>
+                        <input type="password" name="current_password" class="form-control mb-1">
+                        <span data-for="current_password" class="errors text-danger py-2"></span>
+                    </div>
+                <% } %>
+                    <div class="mb-3">
+                        <label class="form-label" for="">Username</label>
+                        <% if(user.id === currentUser){ %>
+                            <input type="text" name="username" class="form-control mb-1"
+                                value="<%= user.username %>">
+                            <span data-for="username" class="errors text-danger py-2"></span>
+                        <% } else { %>
+                            <p class="mb-1">
+                                <%= user.username %>
+                            </p>
+                        <% } %>
+                    </div>
+                    <% if(user.id === currentUser){ %>
+                            <div class="mb-3">
+                                <label class="form-label" for="">Password</label>
+                                <input type="password" name="password" class="form-control mb-1">
+                                <span data-for="password" class="errors text-danger py-2"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="">Password Confirmation</label>
+                                <input type="password" name="password_confirmation" class="form-control mb-1">
+                                <span data-for="password_confirmation" class="errors text-danger py-2"></span>
+                            </div>
+                            <button type="submit" class="btn btn-md btn-success col-12 disabled">
+                                Submit
+                            </button>
+                    <% } %>
             </form>
         </div>
         <div class="d-none d-lg-flex col-lg-6  d-flex align-items-center justify-content-center">
@@ -40,3 +53,16 @@
 </div>
 
 <script type="module" src="/js/users/me.js"></script>
+
+<style>
+    p.mb-1{
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+    }
+</style>
