@@ -40,9 +40,24 @@ db.createUser({
 })
 ```
 
+
+```bash
+#seed the admin and categories
+npm run seed
+```
+
+
 ```bash
 #start the development server
 npm run dev
+```
+
+You can now log in the platform using the following credentials: 
+
+```
+username: "admin",
+password: "Admin22++",
+email: "admin@admin.com",
 ```
 
 ## DATABAsE MODELING

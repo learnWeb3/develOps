@@ -1,0 +1,20 @@
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Article</th>
+            <th scope="col">Title</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Updated At</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% quiz.forEach(quiz => { %>
+            <tr>
+                <td><a href="/articles/<%= quiz.article.id %>"><%=quiz.article.title %></a></td>
+                <td><%=quiz.title %></td>
+                <td><%=quiz.createdAt %></td>
+                <td><%=quiz.updatedAt %></td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>

@@ -7,7 +7,9 @@ import {
 } from "../base/errors/index.js";
 import bcrypt from "bcrypt";
 import Article from "./article.model.js";
+import Quiz from "./quiz.model.js"
 import UserAnswer from "./user_answer.model.js";
+import moment from 'moment';
 
 const { Schema, model } = mongoose;
 const {
@@ -319,9 +321,10 @@ userSchema.statics.register = async function (
     password: null,
     email: null,
     password_confirmation: null,
+    role: roles.user
   }
 ) {
-  const { username, password, email, password_confirmation } = data;
+  const { username, password, email, password_confirmation, role } = data;
 
   const accountUsingUsername = await this.findOne({
     username,
@@ -334,6 +337,12 @@ userSchema.statics.register = async function (
   if (!username || !password || !email || !password_confirmation) {
     throw new BadRequestError(
       "Missing required parameter among username, password, password_confirmation, email"
+    );
+  }
+
+  if(password !== password_confirmation){
+    throw new BadRequestError(
+      "Passwords do not match ! Please check again"
     );
   }
 
@@ -353,6 +362,12 @@ userSchema.statics.register = async function (
     email,
     password_confirmation,
   });
+
+  if(role){
+    Object.assign(newUser, {
+      role
+    })
+  }
 
   const validate = newUser.validateSync();
   if (validate !== undefined) {
@@ -380,5 +395,43 @@ userSchema.statics.login = async function (data = { email, password }) {
   await potentialUser.passwordVerify(password);
   return potentialUser;
 };
+
+
+userSchema.statics.getAdminData = async function(){
+  const users = await this.find({}).then((users)=>users.map((user)=>({
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    role: roles.admin === user.role ? 'admin' : 'user',
+    createdAt: moment( user.createdAt).format('MMM Do YY'),
+    updatedAt: moment( user.updatedAt).format('MMM Do YY'),
+  })));
+
+  const articles = await Article.find({}).populate('category').then((articles)=>articles.map((article)=>({
+    id: article.id,
+    title: article.title,
+    category: {
+      label: article.category.label,
+      id: article.category.id
+    },
+    createdAt: moment( article.createdAt).format('MMM Do YY'),
+    updatedAt: moment( article.updatedAt).format('MMM Do YY'),
+  })))
+  const quiz = await Quiz.find({}).populate('article').then((quizs)=>quizs.map((quiz)=>({
+    title: quiz.title,
+    article: {
+      title: quiz.article.title,
+      id: quiz.article.id
+    },
+    createdAt: moment( quiz.createdAt).format('MMM Do YY'),
+    updatedAt: moment( quiz.updatedAt).format('MMM Do YY'),
+  })));
+
+  return ({
+    users,
+    quiz,
+    articles
+  })
+}
 
 export default model("User", userSchema);

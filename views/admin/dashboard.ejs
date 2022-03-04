@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-3 d-none d-md-flex">
+    </div>
+    <div class="col-12 col-md-6 p-4">
+
+        <h1 class="my-4 fs-2">Management Dashboard</h1>
+
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active position-relative" id="articles-tab" data-bs-toggle="tab"
+                    data-bs-target="#articles" type="button" role="tab" aria-controls="articles" aria-selected="true">
+                    articles
+                    <span
+                        class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <%= articles.length %>
+                    </span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link position-relative" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
+                    type="button" role="tab" aria-controls="users" aria-selected="false">
+                    users
+                    <span
+                        class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <%= users.length %>
+                    </span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link position-relative" id="quiz-tab" data-bs-toggle="tab" data-bs-target="#quiz"
+                    type="button" role="tab" aria-controls="quiz" aria-selected="false">quiz
+                    <span
+                        class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <%= quiz.length %>
+                    </span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="articles" role="tabpanel" aria-labelledby="articles-tab">
+                <%- include('./_table_articles.ejs', {articles}) %>
+            </div>
+            <div class="tab-pane" id="users" role="tabpanel" aria-labelledby="users-tab">
+                <%- include('./_table_users.ejs', {users}) %>
+            </div>
+            <div class="tab-pane" id="quiz" role="tabpanel" aria-labelledby="quiz-tab">
+                <%- include('./_table_quiz.ejs', {quiz}) %>
+            </div>
+        </div>
+    </div>
+    <div class="col-3 d-none d-md-flex"></div>
+</div>
+
+
+<script>
+    const firstTabEl = document.querySelector('#adminTabs li:first-child button')
+    const firstTab = new bootstrap.Tab(firstTabEl)
+    firstTab.show()
+    window.addEventListener('click', function (event) {
+        const { target } = event;
+        const spanCountElementAll = Array.from(document.querySelectorAll('.nav-item button.nav-link span'));
+        const spanCountElementTarget = Array.from(target.children).find((child) => child.tagName === 'SPAN')
+        spanCountElementAll.forEach(element => {
+            !element.classList.contains('d-none') && element.classList.add('d-none')
+        });
+        if (target.classList.contains('nav-link')) {
+            spanCountElementTarget.classList.remove('d-none')
+        } else {
+            spanCountElementTarget.target.classList.add('d-none')
+        }
+    });
+
+    firstTabEl.click();
+</script>
