@@ -9,14 +9,22 @@
         </tr>
     </thead>
     <tbody>
-        <% users.forEach(user => { %>
+        <% if(users.length){ %>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><a href="/users/<%=user.id %>"><%=user.username %></a></td>
+                    <td><%=user.email %></td>
+                    <td><%=user.role %></td>
+                    <td><%=user.createdAt %></td>
+                    <td><%=user.updatedAt %></td>
+                </tr>
+            <% }); %>
+        <% }else { %>
             <tr>
-                <td><a href="/users/<%=user.id %>"><%=user.username %></a></td>
-                <td><%=user.email %></td>
-                <td><%=user.role %></td>
-                <td><%=user.createdAt %></td>
-                <td><%=user.updatedAt %></td>
+                <td colspan="5">
+                    <%- include('../layouts/empty.ejs') %>
+                </td>
             </tr>
-        <% }); %>
+        <% } %>
     </tbody>
 </table>

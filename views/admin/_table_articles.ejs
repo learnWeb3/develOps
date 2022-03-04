@@ -8,13 +8,21 @@
         </tr>
     </thead>
     <tbody>
-        <% articles.forEach(article => { %>
+        <% if(articles.length){ %>
+            <% articles.forEach(article => { %>
+                <tr>
+                    <td><a href="/articles/<%=article.id %>"><%=article.title %></a></td>
+                    <td><a href="/articles?category=<%=article.category.id %>"><%=article.category.label %></a></td>
+                    <td><%=article.createdAt %></td>
+                    <td><%=article.updatedAt %></td>
+                </tr>
+            <% }); %>
+        <% }else { %>
             <tr>
-                <td><a href="/articles/<%=article.id %>"><%=article.title %></a></td>
-                <td><a href="/articles?category=<%=article.category.id %>"><%=article.category.label %></a></td>
-                <td><%=article.createdAt %></td>
-                <td><%=article.updatedAt %></td>
+                <td colspan="4">
+                    <%- include('../layouts/empty.ejs') %>
+                </td>
             </tr>
-        <% }); %>
+        <% } %>
     </tbody>
 </table>

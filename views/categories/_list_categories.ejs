@@ -1,3 +1,4 @@
+<% if(categories.length || isAdmin){ %>
 <ul class="nav flex-column p-4 w-100">
       <li class="nav-item py-2">
         <h2 class="fs-4 nav-link text-dark mb-0">Article categories</h2>
@@ -14,7 +15,20 @@
             </div>
         </li>
     <% }) %>
+    <% if(!categories.length && isAdmin){ %>
+        <li class="nav-item d-flex row col-12 py-2">
+            <div class="col-9 d-flex align-items-center justify-content-start">
+                <a class="nav-link active fs-5 text-dark" aria-current="page" href="/categories/new">Create your 1st category</a>
+            </div>
+            <div class="col-3 d-flex align-items-center justify-content-end">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                  </svg>
+            </div>
+        </li>
+    <% } %>
 </ul>
+<% } %>
 
 <style>
     .nav-item:hover{

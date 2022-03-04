@@ -8,13 +8,21 @@
         </tr>
     </thead>
     <tbody>
-        <% quiz.forEach(quiz => { %>
-            <tr>
-                <td><a href="/articles/<%= quiz.article.id %>"><%=quiz.article.title %></a></td>
-                <td><%=quiz.title %></td>
-                <td><%=quiz.createdAt %></td>
-                <td><%=quiz.updatedAt %></td>
-            </tr>
-        <% }); %>
+        <% if(quiz.length){ %>
+            <% quiz.forEach(quiz => { %>
+                <tr>
+                    <td><a href="/articles/<%= quiz.article.id %>"><%=quiz.article.title %></a></td>
+                    <td><%=quiz.title %></td>
+                    <td><%=quiz.createdAt %></td>
+                    <td><%=quiz.updatedAt %></td>
+                </tr>
+            <% }); %>
+            <% }else { %>
+                <tr>
+                    <td colspan="4">
+                        <%- include('../layouts/empty.ejs') %>
+                    </td>
+                </tr>
+            <% } %>
     </tbody>
 </table>

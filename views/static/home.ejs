@@ -11,6 +11,9 @@
                <%- include('../articles/_card.ejs', {article}) %>
             </div>
             <% }) %>
+            <% if(!articles.length) { %>
+                <%- include('../layouts/empty.ejs') %>
+            <% } %>
         </div>
     </div>
     <div class="col-3 d-none d-md-flex"></div>

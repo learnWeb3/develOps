@@ -6,11 +6,12 @@ const adminRouter = Router();
 
 adminRouter.get("/admin/dashboard", async (req, res, next) => {
   try {
-    const {users, quiz, articles} = await User.getAdminData()
+    const {users, quiz, articles, categories} = await User.getAdminData();
     res.render("admin/dashboard", {
       users,
       quiz,
-      articles
+      articles,
+      categories
     });
   } catch (error) {
     next(error);

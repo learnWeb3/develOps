@@ -4,11 +4,13 @@ import {
   BadRequestError,
   ForbiddenError,
   UnauthorizedError,
+  InternalServerError,
 } from "../base/errors/index.js";
 import bcrypt from "bcrypt";
 import Article from "./article.model.js";
 import Quiz from "./quiz.model.js";
 import UserAnswer from "./user_answer.model.js";
+import Category from "./category.model.js";
 import moment from "moment";
 
 const { Schema, model } = mongoose;
@@ -300,7 +302,7 @@ userSchema.statics.saveChange = async function (
   }
 
   if (role) {
-    if(currentUser.role !== roles.admin){
+    if (currentUser.role !== roles.admin) {
       throw new UnauthorizedError(
         "You do not have the rights to perform this action"
       );
@@ -418,50 +420,78 @@ userSchema.statics.getExistingRoles = function () {
 };
 
 userSchema.statics.getAdminData = async function () {
-  const users = await this.find({}).then((users) =>
-    users.map((user) => ({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      role: roles.admin === user.role ? "admin" : "user",
-      createdAt: moment(user.createdAt).format("MMM Do YY"),
-      updatedAt: moment(user.updatedAt).format("MMM Do YY"),
-    }))
-  );
-
-  const articles = await Article.find({})
-    .populate("category")
-    .then((articles) =>
-      articles.map((article) => ({
-        id: article.id,
-        title: article.title,
-        category: {
-          label: article.category.label,
-          id: article.category.id,
-        },
-        createdAt: moment(article.createdAt).format("MMM Do YY"),
-        updatedAt: moment(article.updatedAt).format("MMM Do YY"),
-      }))
-    );
-  const quiz = await Quiz.find({})
-    .populate("article")
-    .then((quizs) =>
-      quizs.map((quiz) => ({
-        title: quiz.title,
-        article: {
-          title: quiz.article.title,
-          id: quiz.article.id,
-        },
-        createdAt: moment(quiz.createdAt).format("MMM Do YY"),
-        updatedAt: moment(quiz.updatedAt).format("MMM Do YY"),
+  try {
+    const users = await this.find({}).then((users) =>
+      users.map((user) => ({
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: roles.admin === user.role ? "admin" : "user",
+        createdAt: moment(user.createdAt).format("MMM Do YY"),
+        updatedAt: moment(user.updatedAt).format("MMM Do YY"),
       }))
     );
 
-  return {
-    users,
-    quiz,
-    articles,
-  };
+    const articles = await Article.find({})
+      .populate("category")
+      .then((articles) => {
+        if (articles.length) {
+          return articles.map((article) => ({
+            id: article.id,
+            title: article.title,
+            category: {
+              label: article.category.label,
+              id: article.category.id,
+            },
+            createdAt: moment(article.createdAt).format("MMM Do YY"),
+            updatedAt: moment(article.updatedAt).format("MMM Do YY"),
+          }));
+        } else {
+          return [];
+        }
+      });
+
+    const quiz = await Quiz.find({})
+      .populate("article")
+      .then((quizs) => {
+        if (quizs.length) {
+          quizs.map((quiz) => ({
+            title: quiz.title,
+            article: {
+              title: quiz.article.title,
+              id: quiz.article.id,
+            },
+            createdAt: moment(quiz.createdAt).format("MMM Do YY"),
+            updatedAt: moment(quiz.updatedAt).format("MMM Do YY"),
+          }));
+        } else {
+          return [];
+        }
+      });
+
+    const categories = await Category.find({}).then((categories) => {
+      if (categories.length) {
+        return categories.map((category) => ({
+          id: category.id,
+          label: category.label,
+          createdAt: moment(category.createdAt).format("MMM Do YY"),
+          updatedAt: moment(category.updatedAt).format("MMM Do YY"),
+        }));
+      } else {
+        return [];
+      }
+    });
+
+    return {
+      users,
+      quiz,
+      articles,
+      categories
+    };
+  } catch (error) {
+    console.log(error)
+    throw new InternalServerError("An unexpected error occured, we are investigating the issue, please try again later.");
+  }
 };
 
 export default model("User", userSchema);
