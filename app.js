@@ -108,12 +108,6 @@ mongoose
     // true pour utiliser la librairie qs, permets de récuper un objet pur { name: jako,age : 12}
     // false pour utiliser la librairie querystring, permets de récuperer un nested object (objet imbriqué), aussi parse l'url en enlevant le ? de l'url
     // routers
-    app.use(filter({
-      bodyBlackList:['$'], 
-      urlMessage: 'A forbidden expression has been found',
-      appendFound: true,
-      caseSensitive:true
-    }))
     app.use(usersRouter);
     app.use(adminRouter);
     app.use(categoryRouter);

@@ -224,3 +224,13 @@ export function errorHandler(err, req, res, next) {
     next();
   }
 }
+
+// options for the filter middleware
+export const filterOptions = {
+  bodyBlackList: ["$", "&&", "$", "$ne", "$eq", "{", "}"],
+  urlMessage: "A forbidden expression has been found: ",
+  appendFound: true,
+  caseSensitive: true,
+  dispatchToErrorHandler: true,
+  urlBlackList: ["&&", "$", "$ne", "$eq"],
+};

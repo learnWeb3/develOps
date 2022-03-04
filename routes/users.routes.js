@@ -1,9 +1,11 @@
 import express from "express";
 import User from "../models/user.model.js";
+import filter from "content-filter";
+import { filterOptions } from "../middlewares/index.js";
 
 const usersRouter = express.Router();
 
-usersRouter.get("/login", async (req, res, next) => {
+usersRouter.get("/login", filter(filterOptions), async (req, res, next) => {
   try {
     res.render("users/login", {});
   } catch (error) {
@@ -11,7 +13,7 @@ usersRouter.get("/login", async (req, res, next) => {
   }
 });
 
-usersRouter.post("/login", async (req, res, next) => {
+usersRouter.post("/login", filter(filterOptions), async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.login({
@@ -21,8 +23,8 @@ usersRouter.post("/login", async (req, res, next) => {
     req.session.currentUser = user.id;
     req.session.role = user.role;
     req.session.flash = {
-      message: 'Logged in successfully',
-      type: 'success'
+      message: "Logged in successfully",
+      type: "success",
     };
     res.redirect("/");
   } catch (error) {
@@ -31,38 +33,42 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 });
 
-usersRouter.post("/users/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const {
-      email,
-      password,
-      username,
-      password_confirmation,
-      current_password,
-      role
-    } = req.body;
-    const user = await User.saveChange(id, {
-      email,
-      password,
-      password_confirmation,
-      username,
-      current_password,
-      current_user: req.session.currentUser,
-      role
-    });
-    req.session.flash = {
-      message: "Account updated with success",
-      type: "success",
-    };
-    res.redirect(`/users/${user._id}`);
-  } catch (error) {
-    console.error(error);
-    next(error);
+usersRouter.post(
+  "/users/:id",
+  filter(filterOptions),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const {
+        email,
+        password,
+        username,
+        password_confirmation,
+        current_password,
+        role,
+      } = req.body;
+      const user = await User.saveChange(id, {
+        email,
+        password,
+        password_confirmation,
+        username,
+        current_password,
+        current_user: req.session.currentUser,
+        role,
+      });
+      req.session.flash = {
+        message: "Account updated with success",
+        type: "success",
+      };
+      res.redirect(`/users/${user._id}`);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
   }
-});
+);
 
-usersRouter.post("/register", async (req, res, next) => {
+usersRouter.post("/register", filter(filterOptions), async (req, res, next) => {
   try {
     const { email, password, username, password_confirmation } = req.body;
     await User.register({
@@ -82,10 +88,10 @@ usersRouter.post("/register", async (req, res, next) => {
   }
 });
 
-usersRouter.get("/logout", async (req, res, next) => {
+usersRouter.get("/logout", filter(filterOptions), async (req, res, next) => {
   try {
     delete req.session.currentUser;
-    delete req.session.role
+    delete req.session.role;
     req.session.flash = {
       message: "Logged out successfully",
       type: "success",
@@ -96,7 +102,7 @@ usersRouter.get("/logout", async (req, res, next) => {
   }
 });
 
-usersRouter.get("/register", async (req, res, next) => {
+usersRouter.get("/register", filter(filterOptions), async (req, res, next) => {
   try {
     req.session.flash = {
       message:
@@ -109,13 +115,13 @@ usersRouter.get("/register", async (req, res, next) => {
   }
 });
 
-usersRouter.get("/users/:id", async (req, res, next) => {
+usersRouter.get("/users/:id", filter(filterOptions), async (req, res, next) => {
   try {
     const { id } = req.params;
     const user = await User.findOne({
       _id: id,
     });
-    const roles = User.getExistingRoles()
+    const roles = User.getExistingRoles();
     res.render("users/me", {
       user,
       roles,
