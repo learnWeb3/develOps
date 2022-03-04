@@ -21,9 +21,14 @@
 
         editor.on('text-change', function (delta, oldDelta, source) {
            const data = editor.getContents()
-           document.querySelector('#content').value = JSON.stringify(data)
+           document.querySelector('#content').value = JSON.stringify(data).replace(/<script/, "<SCRIPT_OPEN_TAG").replace(/<\/script>/, "<\\/SCRIPT_CLOSE_TAG>")
            document.querySelector('#preview').value = document.querySelector("#editor").innerText.replace('\n', ' ');
            document.querySelector('#imgPreview').value = document.querySelector("#editor img") ? document.querySelector("#editor img").src : ""
         });
+
+        editor.on('text-change', function (delta, oldDelta, source) {
+            console.log(editor.getContents())
+        })
+
 
     </script>

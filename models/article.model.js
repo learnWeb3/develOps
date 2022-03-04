@@ -214,7 +214,7 @@ articleSchema.statics.saveChange = async function (id, update = {}) {
     user: author._id,
     category: articleCategory._id,
     title,
-    content: content,
+    content: content.replace(/<script/, "<SCRIPT_OPEN_TAG").replace(/<\/script>/, "<\\/SCRIPT_CLOSE_TAG>"),
     preview: sliceStringAsPreview(preview, 50),
     imgPreview,
   });
@@ -317,7 +317,7 @@ articleSchema.statics.register = async function (
     user: author._id,
     category: articleCategory._id,
     title,
-    content: content,
+    content: content.replace(/<script/, "<SCRIPT_OPEN_TAG").replace(/<\/script>/, "<\\/SCRIPT_CLOSE_TAG>"),
     preview: sliceStringAsPreview(preview, 50),
     imgPreview,
   });
