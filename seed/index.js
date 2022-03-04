@@ -33,7 +33,7 @@ const seedCategories = async () => {
   ];
   try {
     const categories = [];
-    for (const categoryLabel in seedCategories) {
+    for (const categoryLabel of seedCategories) {
       const data = {
         label: categoryLabel,
       };
